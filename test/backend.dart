@@ -1,6 +1,7 @@
 import 'package:test/test.dart';
 
 import 'package:correze_grouper/backend/utils.dart';
+import 'package:correze_grouper/backend/generators.dart';
 
 void main() {
   test("CSV", () {
@@ -29,18 +30,94 @@ void main() {
 
   test("Group evaluation", () {
     // Generated with previously implemented algo
-    List<List<String>> groups = [['Gillot Edern', 'Alcufrom Winston', 'Delmas Idil', 'Nguyen Mia', 'Mire Adrien', 'Sawko Thais', ],
-    ['Sarkozy De Nagy Bosca Arpad', 'Esfandiari Nafsika', 'Yang Jingjie', 'Vilde Celeste', 'Hibon Adrien Arya', 'Mourouga Erell', ],
-    ['Herbette Titouan', 'Morel Gabriel', 'Lazo Emily', 'Rousselet Kayla', 'Du Buisson Perrine Matthieu', 'Cavrel Sara', ],
-    ['Somaini Cardelus Federico', 'Povse Matej', 'Marenzi Cyrus', 'Maghraoui Lena', 'Ismail Natasha', 'Fabian Ariane', ],
-    ['Tabet Elsa', 'Elfaizy-Phillips Theodorus', 'Du Buisson Perrine Lucas', 'Corvalan Myrna-Paula', 'Isore William', 'Ali Cherif Neila', ],
-    ['Levy Gabrielle', 'Hellouin De Menibus George', 'Burnham Elliot', 'Zunino Lavinia', 'Ypma Louis', 'Tark Sehyun', ],
-    ['Maghraoui Sarah', 'Prigent Colin', 'Sauvage Gaspard', 'Korchagin Antoine', 'Higgins Kimberly', 'Evgeniou Lilia', ],
-    ['Picard Théo', 'Dao Léo', 'Ruggiero Eva', 'Chung Byeola', 'Du Buisson Perrine Hugo', 'Bovard Andrea', ],
-    ['Coulom Stella', 'Amar Paul Benjamin', 'Deneve Marc', 'Streimann Helena', 'Del Monte Giulio', 'Salleras Adora', ],
-    ['Wen Chih-Liang', 'Lecommandeur Louise', 'Spotnitz Amelia', 'Makhotina Ilkay', 'Amlani Lucca', ],
+    List<List<String>> groups = [
+      [
+        'Gillot Edern',
+        'Alcufrom Winston',
+        'Delmas Idil',
+        'Nguyen Mia',
+        'Mire Adrien',
+        'Sawko Thais',
+      ],
+      [
+        'Sarkozy De Nagy Bosca Arpad',
+        'Esfandiari Nafsika',
+        'Yang Jingjie',
+        'Vilde Celeste',
+        'Hibon Adrien Arya',
+        'Mourouga Erell',
+      ],
+      [
+        'Herbette Titouan',
+        'Morel Gabriel',
+        'Lazo Emily',
+        'Rousselet Kayla',
+        'Du Buisson Perrine Matthieu',
+        'Cavrel Sara',
+      ],
+      [
+        'Somaini Cardelus Federico',
+        'Povse Matej',
+        'Marenzi Cyrus',
+        'Maghraoui Lena',
+        'Ismail Natasha',
+        'Fabian Ariane',
+      ],
+      [
+        'Tabet Elsa',
+        'Elfaizy-Phillips Theodorus',
+        'Du Buisson Perrine Lucas',
+        'Corvalan Myrna-Paula',
+        'Isore William',
+        'Ali Cherif Neila',
+      ],
+      [
+        'Levy Gabrielle',
+        'Hellouin De Menibus George',
+        'Burnham Elliot',
+        'Zunino Lavinia',
+        'Ypma Louis',
+        'Tark Sehyun',
+      ],
+      [
+        'Maghraoui Sarah',
+        'Prigent Colin',
+        'Sauvage Gaspard',
+        'Korchagin Antoine',
+        'Higgins Kimberly',
+        'Evgeniou Lilia',
+      ],
+      [
+        'Picard Théo',
+        'Dao Léo',
+        'Ruggiero Eva',
+        'Chung Byeola',
+        'Du Buisson Perrine Hugo',
+        'Bovard Andrea',
+      ],
+      [
+        'Coulom Stella',
+        'Amar Paul Benjamin',
+        'Deneve Marc',
+        'Streimann Helena',
+        'Del Monte Giulio',
+        'Salleras Adora',
+      ],
+      [
+        'Wen Chih-Liang',
+        'Lecommandeur Louise',
+        'Spotnitz Amelia',
+        'Makhotina Ilkay',
+        'Amlani Lucca',
+      ],
     ];
     var eva = MeanEvaluator(promo2019);
     print(eva.findIssues(fromList(promo2019, groups)));
+  });
+
+  test("Group generation", () {
+    var gen = MinJealousyGenerator(promo2019);
+    var eva = MeanEvaluator(promo2019);
+    print(eva.findIssues(gen.generate()));
   });
 }

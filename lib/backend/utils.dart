@@ -276,7 +276,7 @@ abstract class Generator {
 
   Generator(this.promo);
 
-  List<List<Student>> generate(
+  Grouping generate(
       {int numberOfGroups = 10, PBarUpdateCallback pBarUpdateCallback});
 }
 
