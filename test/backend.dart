@@ -120,4 +120,21 @@ void main() {
     var eva = MeanEvaluator(promo2019);
     print(eva.findIssues(gen.generate()));
   });
+
+  test("Profile", () {
+    expect(
+        Profile(
+              gender: Gender.M,
+              group4Subject: Subject.BIO,
+              group4Level: Level.SL,
+              isStrongLeader: false,
+            ) ==
+            Profile(
+              gender: Gender.M,
+              group4Subject: Subject.BIO,
+              group4Level: Level.SL,
+              isStrongLeader: false,
+            ),
+        true);
+  });
 }

@@ -6,8 +6,7 @@ class StudentEntry extends StatelessWidget {
   final String studentName;
   final VoidCallback onTapCallback;
 
-  static final Color selectedColor = Colors.lightBlue[300];
-  static final Color highlightedColor = Colors.lightGreenAccent[300];
+  static final Color selectedColor = Colors.lightBlue[100];
 
   const StudentEntry(
       {Key key,
@@ -19,14 +18,16 @@ class StudentEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Chip(
-        label: Text(studentName),
-        backgroundColor: isSelected
-            ? selectedColor
-            : isHighlighted ? highlightedColor : null,
+    return new FlatButton(
+      child: new Text(
+        studentName,
+        style: TextStyle(
+          fontWeight: isHighlighted ? FontWeight.w900 : null,
+        ),
       ),
-      onTap: onTapCallback,
+      onPressed: onTapCallback,
+      splashColor: isSelected ? null : selectedColor,
+      color: isSelected ? selectedColor : null,
     );
   }
 }

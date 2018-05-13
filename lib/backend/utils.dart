@@ -16,13 +16,15 @@ class Profile {
   final Level group6Level;
   final bool isStrongLeader;
 
-  Profile({
+  static final Map<int, Profile> _cache = {};
+
+  Profile._internal({
     this.gender,
     this.group4Subject,
     this.group4Level,
     this.group6Subject,
     this.group6Level,
-    this.isStrongLeader,
+    this.isStrongLeader = false,
   }) {
     assert(gender != null);
     assert(group4Subject == Subject.BIO || group4Subject == Subject.PHY);
@@ -32,18 +34,31 @@ class Profile {
         : group6Subject == Subject.CHM && group6Level != null);
   }
 
-  @override
-  int get hashCode => identityHashCode([
-        gender,
-        group4Subject,
-        group4Level,
-        group6Subject,
-        group6Level,
-        isStrongLeader
-      ]);
-
-  @override
-  bool operator ==(other) => other is Profile && hashCode == other.hashCode;
+  factory Profile(
+      {Gender gender,
+      Subject group4Subject,
+      Level group4Level,
+      Subject group6Subject,
+      Level group6Level,
+      bool isStrongLeader}) {
+    int hashCode = identityHashCode(gender) +
+        31 * identityHashCode(group4Subject) +
+        31 * 31 * identityHashCode(group4Level) +
+        31 * 31 * 31 * identityHashCode(group6Subject) +
+        31 * 31 * 31 * 31 * identityHashCode(group6Level) +
+        31 * 31 * 31 * 31 * 31 * identityHashCode(isStrongLeader);
+    if (_cache.containsKey(hashCode)) return _cache[hashCode];
+    Profile profile = Profile._internal(
+      gender: gender,
+      group4Subject: group4Subject,
+      group4Level: group4Level,
+      group6Subject: group6Subject,
+      group6Level: group6Level,
+      isStrongLeader: isStrongLeader,
+    );
+    _cache[hashCode] = profile;
+    return profile;
+  }
 }
 
 /// A student defined by his/her name and [Profile].
@@ -52,26 +67,20 @@ class Student {
   final String name;
 
   Student({this.profile, this.name});
-
-  @override
-  int get hashCode => identityHashCode(name) + identityHashCode(profile) * 31;
-
-  @override
-  bool operator ==(other) {
-    return other is Student && profile == other.profile && name == other.name;
-  }
 }
 
 class StudentPos {
-  int groupInd, memberInd;
-  StudentPos(this.groupInd, this.memberInd);
+  final int groupInd, memberInd;
+  static final Map<int, StudentPos> _cache = {};
 
-  @override
-  int get hashCode => identityHashCode(groupInd) + identityHashCode(memberInd) * 31;
+  StudentPos._internal(this.groupInd, this.memberInd);
 
-  @override
-  bool operator ==(other) {
-    return other is StudentPos && hashCode == other.hashCode;
+  factory StudentPos(int groupInd, int memberInd) {
+    int hashCode =
+        identityHashCode(groupInd) + identityHashCode(memberInd) * 31;
+    if (!_cache.containsKey(hashCode))
+      _cache[hashCode] = StudentPos._internal(groupInd, memberInd);
+    return _cache[hashCode];
   }
 }
 
@@ -83,7 +92,8 @@ class Grouping {
 
   void swap(StudentPos pos1, StudentPos pos2) {
     Student temp = groups[pos1.groupInd][pos1.memberInd];
-    groups[pos1.groupInd][pos1.memberInd] = groups[pos2.groupInd][pos2.memberInd];
+    groups[pos1.groupInd][pos1.memberInd] =
+        groups[pos2.groupInd][pos2.memberInd];
     groups[pos2.groupInd][pos2.memberInd] = temp;
   }
 }

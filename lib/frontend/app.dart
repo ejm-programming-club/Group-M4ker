@@ -44,10 +44,37 @@ class _AppState extends State<App> {
   }
 
   void select(StudentPos pos) {
-    if (selectedPositions.contains(pos))
-      selectedPositions.remove(pos);
-    else if (selectedPositions.length == 2) selectedPositions.removeLast();
-    selectedPositions.add(pos);
+    setState(() {
+      if (selectedPositions.contains(pos))
+        selectedPositions.remove(pos);
+      else {
+        if (selectedPositions.length == 2) selectedPositions.removeLast();
+        selectedPositions.add(pos);
+      }
+
+      if (selectedPositions.length == 1) {
+        highlightedPositions = locateProfile(grouping
+            .groups[selectedPositions.last.groupInd]
+                [selectedPositions.last.memberInd]
+            .profile);
+      } else {
+        highlightedPositions = [];
+      }
+    });
+  }
+
+  List<StudentPos> locateProfile(Profile profile) {
+    List<StudentPos> positions = [];
+    for (int groupInd = 0; groupInd < grouping.groups.length; groupInd++) {
+      for (int memberInd = 0;
+          memberInd < grouping.groups[groupInd].length;
+          memberInd++) {
+        if (grouping.groups[groupInd][memberInd].profile == profile) {
+          positions.add(StudentPos(groupInd, memberInd));
+        }
+      }
+    }
+    return positions;
   }
 
   @override
