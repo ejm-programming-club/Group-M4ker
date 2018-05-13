@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:correze_grouper/backend/utils.dart';
 import 'package:correze_grouper/backend/generators.dart';
 import 'package:correze_grouper/frontend/group.dart';
+import 'package:correze_grouper/frontend/profile.dart';
 
 class App extends StatefulWidget {
   @override
@@ -93,7 +94,7 @@ class _AppState extends State<App> {
               onStudentSelectCallback: select,
             ))
         .toList();
-    List<Column> groupColumns = [];
+    List<Widget> groupColumns = [];
     for (int i = 0; i < groupBoxes.length; i += 2) {
       groupColumns.add(Column(
         children: groupBoxes.sublist(i, min(i + 2, groupBoxes.length)),
@@ -110,9 +111,19 @@ class _AppState extends State<App> {
         ),
         body: new Column(
           children: <Widget>[
-            Row(
-              children: groupColumns,
-            ),
+            Row(children: groupColumns),
+            selectedPositions.isEmpty
+                ? Row()
+                : ProfilePreview(
+                    profile: grouping
+                        .groups[selectedPositions.last.groupInd]
+                            [selectedPositions.last.memberInd]
+                        .profile,
+                    name: grouping
+                        .groups[selectedPositions.last.groupInd]
+                            [selectedPositions.last.memberInd]
+                        .name,
+                  ),
           ],
         ),
         persistentFooterButtons: <Widget>[
