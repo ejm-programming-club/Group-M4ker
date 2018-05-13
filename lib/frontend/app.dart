@@ -37,9 +37,9 @@ class _AppState extends State<App> {
   }
 
   void swap() {
-    if (selectedPositions.length != 2) return;
     setState(() {
       grouping.swap(selectedPositions[0], selectedPositions[1]);
+      issues = evaluator.findIssues(grouping);
     });
   }
 
@@ -48,8 +48,10 @@ class _AppState extends State<App> {
       if (selectedPositions.contains(pos))
         selectedPositions.remove(pos);
       else {
-        if (selectedPositions.length == 2) selectedPositions.removeLast();
-        selectedPositions.add(pos);
+        if (selectedPositions.length == 2)
+          selectedPositions.clear();
+        else
+          selectedPositions.add(pos);
       }
 
       if (selectedPositions.length == 1) {
@@ -114,7 +116,26 @@ class _AppState extends State<App> {
           ],
         ),
         persistentFooterButtons: <Widget>[
-          new IconButton(icon: Icon(Icons.refresh), onPressed: generateGroups)
+          new IconButton(
+            icon: Icon(Icons.file_download),
+            onPressed: null,
+          ),
+          new IconButton(
+            icon: Icon(Icons.file_upload),
+            onPressed: null,
+          ),
+          new IconButton(
+            icon: Icon(Icons.swap_horiz),
+            onPressed: selectedPositions.length == 2 ? swap : null,
+          ),
+          new IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: null,
+          ),
+          new IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: generateGroups,
+          ),
         ],
       ),
     );

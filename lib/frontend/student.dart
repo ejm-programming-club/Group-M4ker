@@ -6,7 +6,7 @@ class StudentEntry extends StatelessWidget {
   final String studentName;
   final VoidCallback onTapCallback;
 
-  static final Color selectedColor = Colors.lightBlue[100];
+  static final Color selectedColor = Colors.lightBlue[200];
 
   const StudentEntry(
       {Key key,
@@ -22,7 +22,9 @@ class StudentEntry extends StatelessWidget {
       child: new Text(
         studentName,
         style: TextStyle(
-          fontWeight: isHighlighted ? FontWeight.w900 : null,
+          decoration: isHighlighted ? TextDecoration.underline : null,
+          decorationColor: selectedColor,
+          decorationStyle: TextDecorationStyle.double,
         ),
       ),
       onPressed: onTapCallback,

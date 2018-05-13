@@ -26,26 +26,44 @@ class GroupBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width / 5,
-      height: MediaQuery.of(context).size.height / 3,
+      height: MediaQuery.of(context).size.height / 2.7,
       child: Card(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: members.asMap().entries.map(
-            (MapEntry<int, Student> member) {
-              List<String> name = member.value.name.split(' ');
-              var firstName = name.last;
-              var abbreviatedLastName = name.first[0] + '.';
-              return StudentEntry(
-                studentName: "$firstName $abbreviatedLastName",
-                isSelected: selectedPositions
-                    .contains(StudentPos(groupInd, member.key)),
-                isHighlighted: highlightedPositions
-                    .contains(StudentPos(groupInd, member.key)),
-                onTapCallback: () =>
-                    onStudentSelectCallback(StudentPos(groupInd, member.key)),
-              );
-            },
-          ).toList(),
+          children: <Widget>[
+                Tooltip(
+                  child: Text(
+                    "Group #${groupInd + 1}",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      decoration:
+                          issues.isEmpty ? null : TextDecoration.underline,
+                      decorationColor: issues.isEmpty ? null : Colors.red,
+                      decorationStyle: TextDecorationStyle.wavy,
+                    ),
+                  ),
+                  message: issues.isEmpty
+                      ? "✅"
+                      : issues.map((String s) => "❌ $s").join("\n"),
+                ),
+                Divider(),
+              ] +
+              members.asMap().entries.map(
+                (MapEntry<int, Student> member) {
+                  List<String> name = member.value.name.split(' ');
+                  var firstName = name.last;
+                  var abbreviatedLastName = name.first[0] + '.';
+                  return StudentEntry(
+                    studentName: "$firstName $abbreviatedLastName",
+                    isSelected: selectedPositions
+                        .contains(StudentPos(groupInd, member.key)),
+                    isHighlighted: highlightedPositions
+                        .contains(StudentPos(groupInd, member.key)),
+                    onTapCallback: () => onStudentSelectCallback(
+                        StudentPos(groupInd, member.key)),
+                  );
+                },
+              ).toList(),
         ),
       ),
     );
