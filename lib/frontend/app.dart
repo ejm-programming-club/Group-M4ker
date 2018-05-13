@@ -17,8 +17,8 @@ class _AppState extends State<App> {
 
   int groupCount = 10;
 
-  // TODO Actually the generation is so fast that this is useless.
-  double progress = 0.0;
+  bool loading = false;
+
   Grouping grouping = Grouping([]);
   List<List<String>> issues = [];
 
@@ -27,13 +27,14 @@ class _AppState extends State<App> {
 
   void generateGroups() {
     setState(() {
+      loading = true;
       grouping = generator.generate(
         numberOfGroups: groupCount,
-        pBarUpdateCallback: (double p) => setState(() => progress = p),
       );
       issues = evaluator.findIssues(grouping);
       selectedPositions = [];
       highlightedPositions = [];
+      loading = false;
     });
   }
 
@@ -126,6 +127,7 @@ class _AppState extends State<App> {
                   ),
           ],
         ),
+        floatingActionButton: loading ? CircularProgressIndicator() : null,
         persistentFooterButtons: <Widget>[
           new IconButton(
             icon: Icon(Icons.file_download),
@@ -145,7 +147,7 @@ class _AppState extends State<App> {
           ),
           new IconButton(
             icon: Icon(Icons.refresh),
-            onPressed: generateGroups,
+            onPressed: loading ? null : generateGroups,
           ),
         ],
       ),

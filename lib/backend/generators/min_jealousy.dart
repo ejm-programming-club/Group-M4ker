@@ -55,7 +55,7 @@ class MinJealousyGenerator implements Generator {
 
   @override
   Grouping generate(
-      {int numberOfGroups: 10, PBarUpdateCallback pBarUpdateCallback}) {
+      {int numberOfGroups: 10}) {
     List<List<Student>> groups = <List<Student>>[];
     for (int i = 0; i < numberOfGroups; i++) groups.add([]);
     promo.shuffle();
@@ -70,9 +70,6 @@ class MinJealousyGenerator implements Generator {
     }
     Grouping gp = Grouping(groups);
 
-    if (pBarUpdateCallback != null) {
-      pBarUpdateCallback(0.0);
-    }
     // Optimise
     while (true) {
       num currentScore = evaluate(gp);
@@ -102,15 +99,15 @@ class MinJealousyGenerator implements Generator {
       }
 
       gp.swap(bestPos1, bestPos2);
-      if (pBarUpdateCallback != null) {
-        double progress = 1 - (currentScore - bestScore) / currentScore;
-        pBarUpdateCallback(progress);
-      }
-    }
-    if (pBarUpdateCallback != null) {
-      pBarUpdateCallback(1.0);
     }
 
+    // Ensure no issues found
+    if (MeanEvaluator(promo)
+        .findIssues(gp)
+        .where((List<String> issues) => issues.isNotEmpty)
+        .isNotEmpty) {
+      return generate(numberOfGroups: numberOfGroups);
+    }
 
     return gp;
   }
