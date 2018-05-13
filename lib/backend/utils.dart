@@ -1,5 +1,3 @@
-typedef void PBarUpdateCallback(double);
-
 enum Gender { M, F }
 enum Level { SL, HL }
 enum Subject { BIO, CHM, PHY }
@@ -54,6 +52,27 @@ class Student {
   final String name;
 
   Student({this.profile, this.name});
+
+  @override
+  int get hashCode => identityHashCode(name) + identityHashCode(profile) * 31;
+
+  @override
+  bool operator ==(other) {
+    return other is Student && profile == other.profile && name == other.name;
+  }
+}
+
+class StudentPos {
+  int groupInd, memberInd;
+  StudentPos(this.groupInd, this.memberInd);
+
+  @override
+  int get hashCode => identityHashCode(groupInd) + identityHashCode(memberInd) * 31;
+
+  @override
+  bool operator ==(other) {
+    return other is StudentPos && hashCode == other.hashCode;
+  }
 }
 
 /// An arrangement of groups of students.
@@ -62,10 +81,10 @@ class Grouping {
 
   Grouping(this.groups);
 
-  void swap(int groupInd1, personInd1, int groupInd2, int personInd2) {
-    Student temp = groups[groupInd1][personInd1];
-    groups[groupInd1][personInd1] = groups[groupInd2][personInd2];
-    groups[groupInd2][personInd2] = temp;
+  void swap(StudentPos pos1, StudentPos pos2) {
+    Student temp = groups[pos1.groupInd][pos1.memberInd];
+    groups[pos1.groupInd][pos1.memberInd] = groups[pos2.groupInd][pos2.memberInd];
+    groups[pos2.groupInd][pos2.memberInd] = temp;
   }
 }
 
@@ -270,15 +289,6 @@ Grouping fromList(List<Student> promo, List<List<String>> groups) => Grouping(
         .map((List<String> group) =>
             group.map((String name) => findFrom(promo, name)).toList())
         .toList());
-
-abstract class Generator {
-  final List<Student> promo;
-
-  Generator(this.promo);
-
-  Grouping generate(
-      {int numberOfGroups = 10, PBarUpdateCallback pBarUpdateCallback});
-}
 
 abstract class Evaluator {
   List<Student> promo;

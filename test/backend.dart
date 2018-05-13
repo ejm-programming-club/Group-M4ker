@@ -29,7 +29,7 @@ void main() {
   });
 
   test("Group evaluation", () {
-    // Generated with previously implemented algo
+    // Generated with previously implemented algorithm
     List<List<String>> groups = [
       [
         'Gillot Edern',

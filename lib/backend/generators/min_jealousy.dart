@@ -1,4 +1,5 @@
 import '../utils.dart';
+import '../generators.dart';
 
 /// Generates groups aiming to minimise the jealousy between groups.
 ///
@@ -6,7 +7,7 @@ import '../utils.dart';
 /// males, females, biologists, chemists, physicists, SLs, HLs, leaders
 /// in each pair of groups.
 class MinJealousyGenerator implements Generator {
-  List<Student> promo;
+  final List<Student> promo;
 
   MinJealousyGenerator(this.promo);
 
@@ -69,26 +70,29 @@ class MinJealousyGenerator implements Generator {
     }
     Grouping gp = Grouping(groups);
 
+    if (pBarUpdateCallback != null) {
+      pBarUpdateCallback(0.0);
+    }
     // Optimise
     while (true) {
       num currentScore = evaluate(gp);
       num bestScore = double.infinity;
-      int a, b, c, d;
+      StudentPos bestPos1, bestPos2;
 
       for (int i = 0; i < gp.groups.length; i++) {
         for (int j = 0; j < i; j++) {
           for (int k = 0; k < gp.groups[i].length; k++) {
             for (int l = 0; l < gp.groups[j].length; l++) {
-              gp.swap(i, k, j, l);
+              var pos1 = StudentPos(i, k);
+              var pos2 = StudentPos(j, l);
+              gp.swap(pos1, pos2);
               num newScore = evaluate(gp);
               if (newScore < bestScore) {
                 bestScore = newScore;
-                a = i;
-                b = k;
-                c = j;
-                d = l;
+                bestPos1 = pos1;
+                bestPos2 = pos2;
               }
-              gp.swap(i, k, j, l);
+              gp.swap(pos1, pos2);
             }
           }
         }
@@ -97,8 +101,16 @@ class MinJealousyGenerator implements Generator {
         break;
       }
 
-      gp.swap(a, b, c, d);
+      gp.swap(bestPos1, bestPos2);
+      if (pBarUpdateCallback != null) {
+        double progress = 1 - (currentScore - bestScore) / currentScore;
+        pBarUpdateCallback(progress);
+      }
     }
+    if (pBarUpdateCallback != null) {
+      pBarUpdateCallback(1.0);
+    }
+
 
     return gp;
   }
