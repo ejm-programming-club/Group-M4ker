@@ -1,5 +1,5 @@
 import '../utils.dart';
-import '../generators.dart';
+import '../generator.dart';
 
 /// Generates groups aiming to minimise the jealousy between groups.
 ///
@@ -11,32 +11,23 @@ class MinJealousyGenerator implements Generator {
 
   MinJealousyGenerator(this.promo);
 
-  static num mCoeff = 1,
-      fCoeff = 1,
-      bioCoeff = 1,
-      chmCoeff = 1,
-      phyCoeff = 1,
-      slCoeff = 1,
-      hlCoeff = 1,
-      leaderCoeff = 1;
-
   num diffGroups(List<Student> group1, List<Student> group2) {
     var cnt1 = GroupStats.of(group1);
     var cnt2 = GroupStats.of(group2);
 
-    num diff = 0;
-    diff += (cnt1.maleCount - cnt2.maleCount).abs() * mCoeff;
-    diff += (cnt1.femaleCount - cnt2.femaleCount).abs() * fCoeff;
+    double diff = 0.0;
+    diff += (cnt1.maleCount - cnt2.maleCount).abs();
+    diff += (cnt1.femaleCount - cnt2.femaleCount).abs();
 
-    diff += (cnt1.bioCount - cnt2.bioCount).abs() * bioCoeff;
-    diff += (cnt1.chmCount - cnt2.chmCount).abs() * chmCoeff;
-    diff += (cnt1.phyCount - cnt2.phyCount).abs() * phyCoeff;
+    diff += (cnt1.bioCount - cnt2.bioCount).abs();
+    diff += (cnt1.chmCount - cnt2.chmCount).abs();
+    diff += (cnt1.phyCount - cnt2.phyCount).abs();
 
-    diff += (cnt1.slCount - cnt2.slCount).abs() * slCoeff;
-    diff += (cnt1.hlCount - cnt2.hlCount).abs() * hlCoeff;
+    diff += (cnt1.slCount - cnt2.slCount).abs();
+    diff += (cnt1.hlCount - cnt2.hlCount).abs();
 
     diff +=
-        (cnt1.strongLeadersCount - cnt2.strongLeadersCount).abs() * leaderCoeff;
+        (cnt1.strongLeadersCount - cnt2.strongLeadersCount).abs();
 
     return diff;
   }
@@ -54,8 +45,7 @@ class MinJealousyGenerator implements Generator {
   }
 
   @override
-  Grouping generate(
-      {int numberOfGroups: 10}) {
+  Grouping generate({int numberOfGroups: 10}) {
     List<List<Student>> groups = <List<Student>>[];
     for (int i = 0; i < numberOfGroups; i++) groups.add([]);
     promo.shuffle();
@@ -102,12 +92,12 @@ class MinJealousyGenerator implements Generator {
     }
 
     // Ensure no issues found
-    if (MeanEvaluator(promo)
+    /*if (MeanEvaluator(promo)
         .findIssues(gp)
         .where((List<String> issues) => issues.isNotEmpty)
         .isNotEmpty) {
       return generate(numberOfGroups: numberOfGroups);
-    }
+    }*/
 
     return gp;
   }
