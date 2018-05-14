@@ -24,6 +24,35 @@ class ProfileField extends StatelessWidget {
   }
 }
 
+class ProfileChip extends StatelessWidget {
+  final Color chipColor;
+  final Color textColor;
+  final String text;
+  final double chipElevation;
+
+  const ProfileChip({
+    Key key,
+    this.chipColor = const Color(0xFFFAFAFA),
+    this.textColor = Colors.black,
+    this.chipElevation = 1.0,
+    this.text,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: new Padding(
+        padding: new EdgeInsets.all(4.0),
+        child: new Text(
+            text, style: new TextStyle(color: textColor),
+        ),
+      ),
+      color: chipColor,
+      elevation: chipElevation,
+    );
+  }
+}
+
 class ProfilePreview extends StatelessWidget {
   final Profile profile;
   final String name;
@@ -44,49 +73,38 @@ class ProfilePreview extends StatelessWidget {
     List<ProfileField> fields = [
       ProfileField(
         header: "Name",
-        child: Card(
-          child: Text(name),
-          elevation: 0.0,
+        child: ProfileChip(
+          text: name,
+          chipElevation: 0.0,
         ),
       ),
       ProfileField(
         header: "Gender",
-        child: Card(
-            child: Text(
-              profile.gender.toString(),
-              style: TextStyle(
-                color: textColor,
-              ),
-            ),
-            color: {
-              Gender.M: maleColor,
-              Gender.F: femaleColor,
-            }[profile.gender]),
+        child: ProfileChip(
+          text: profile.gender.toString(),
+          textColor: textColor,
+          chipColor: {
+            Gender.M: maleColor,
+            Gender.F: femaleColor,
+          }[profile.gender],
+        ),
       ),
       ProfileField(
         header: "Group 4",
         child: Row(
           children: <Widget>[
-            Card(
-              child: Text(
-                profile.group4Subject.toString(),
-                style: TextStyle(
-                  color: textColor,
-                ),
-              ),
-              color: {
+            ProfileChip(
+              text: profile.group4Subject.toString(),
+              textColor: textColor,
+              chipColor: {
                 Subject.BIO: bioColor,
                 Subject.PHY: phyColor,
               }[profile.group4Subject],
             ),
-            Card(
-              child: Text(
-                profile.group4Level.toString(),
-                style: TextStyle(
-                  color: textColor,
-                ),
-              ),
-              color: {
+            ProfileChip(
+              text: profile.group4Level.toString(),
+              textColor: textColor,
+              chipColor: {
                 Level.SL: slColor,
                 Level.HL: hlColor,
               }[profile.group4Level],

@@ -111,23 +111,25 @@ class _AppState extends State<App> {
         appBar: new AppBar(
           title: Text("Corrèze Groupers"),
         ),
-        body: new Column(
-          children: <Widget>[
-            Row(children: groupColumns),
-            selectedPositions.isEmpty
-                ? Row()
-                : ProfilePreview(
-                    profile: grouping
-                        .groups[selectedPositions.last.groupInd]
-                            [selectedPositions.last.memberInd]
-                        .profile,
-                    name: grouping
-                        .groups[selectedPositions.last.groupInd]
-                            [selectedPositions.last.memberInd]
-                        .name,
-                  ),
-          ],
-        ),
+        body: new ListView(children: <Widget>[
+          new Column(
+            children: <Widget>[
+              Row(children: groupColumns),
+              selectedPositions.isEmpty
+                  ? Row()
+                  : ProfilePreview(
+                      profile: grouping
+                          .groups[selectedPositions.last.groupInd]
+                              [selectedPositions.last.memberInd]
+                          .profile,
+                      name: grouping
+                          .groups[selectedPositions.last.groupInd]
+                              [selectedPositions.last.memberInd]
+                          .name,
+                    ),
+            ],
+          ),
+        ]),
         floatingActionButton: loading ? CircularProgressIndicator() : null,
         persistentFooterButtons: <Widget>[
           new IconButton(

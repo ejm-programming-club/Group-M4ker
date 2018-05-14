@@ -12,21 +12,21 @@ class GroupBox extends StatelessWidget {
   final List<StudentPos> selectedPositions;
   final List<StudentPos> highlightedPositions;
 
-  const GroupBox(
-      {Key key,
-      this.members,
-      this.onStudentSelectCallback,
-      this.selectedPositions,
-      this.highlightedPositions,
-      this.groupInd,
-      this.issues})
-      : super(key: key);
+  const GroupBox({
+    Key key,
+    this.members,
+    this.onStudentSelectCallback,
+    this.selectedPositions,
+    this.highlightedPositions,
+    this.groupInd,
+    this.issues,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width / 5,
-      height: MediaQuery.of(context).size.height / 2.7,
+      height: MediaQuery.of(context).size.height / 2.75,
       child: Card(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
