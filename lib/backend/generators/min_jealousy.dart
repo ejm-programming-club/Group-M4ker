@@ -26,8 +26,7 @@ class MinJealousyGenerator implements Generator {
     diff += (cnt1.slCount - cnt2.slCount).abs();
     diff += (cnt1.hlCount - cnt2.hlCount).abs();
 
-    diff +=
-        (cnt1.strongLeadersCount - cnt2.strongLeadersCount).abs();
+    diff += (cnt1.strongLeadersCount - cnt2.strongLeadersCount).abs();
 
     return diff;
   }

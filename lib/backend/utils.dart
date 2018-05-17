@@ -291,7 +291,7 @@ Student findFrom(List<Student> promo, String name) {
   for (Student student in promo) {
     if (student.name == name) return student;
   }
-  return null;
+  throw Exception;
 }
 
 Grouping fromList(List<Student> promo, List<List<String>> groups) => Grouping(

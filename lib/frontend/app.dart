@@ -6,16 +6,30 @@ import 'package:correze_grouper/backend/evaluator.dart';
 import 'package:correze_grouper/frontend/group.dart';
 import 'package:correze_grouper/frontend/profile.dart';
 
-class App extends StatefulWidget {
+class App extends StatelessWidget {
   @override
-  State<StatefulWidget> createState() => _AppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        primaryColor: Colors.teal,
+      ),
+      title: "Corrèze Groupers",
+      home: Grouper(),
+    );
+  }
 }
 
-class _AppState extends State<App> {
-  List<Student> _promo = promo2019;
-  List<Student> _promoUnmodified = promo2019;
+class Grouper extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _GrouperState();
+}
+
+class _GrouperState extends State<Grouper> {
+  List<Student> _promo;
+  List<Student> _promoUnmodified;
 
   List<Student> get promo => _promo;
+
   set promo(List<Student> promo) {
     setState(() {
       _promo = promo;
@@ -24,13 +38,18 @@ class _AppState extends State<App> {
     });
   }
 
-  Evaluator evaluator = MeanEvaluator(promo2019);
-  Generator generator = MinJealousyGenerator(promo2019);
+  _GrouperState() {
+    _promo = _promoUnmodified = promo2019;
+
+    evaluator = MeanEvaluator(promo);
+    generator = MinJealousyGenerator(promo);
+  }
+
+  Evaluator evaluator;
+  Generator generator;
 
   int groupCount = 10;
   Subject excludedSubject;
-
-  bool loading = false;
 
   Grouping grouping = Grouping([]);
   List<List<String>> issues = [];
@@ -43,14 +62,12 @@ class _AppState extends State<App> {
 
   void generateGroups() {
     setState(() {
-      loading = true;
       grouping = generator.generate(
         numberOfGroups: groupCount,
       );
       issues = evaluator.findIssues(grouping);
       selectedPositions = [];
       highlightedPositions = [];
-      loading = false;
 
       swapHistory.clear();
       swapHistoryPointer = -1;
@@ -127,6 +144,10 @@ class _AppState extends State<App> {
     });
   }
 
+  void load() {}
+
+  void save() {}
+
   List<StudentPos> locateProfile(Profile profile) {
     List<StudentPos> positions = [];
     for (int groupInd = 0; groupInd < grouping.groups.length; groupInd++) {
@@ -161,45 +182,38 @@ class _AppState extends State<App> {
         children: groupBoxes.sublist(i, min(i + 2, groupBoxes.length)),
       ));
     }
-    return MaterialApp(
-      theme: ThemeData(
-        primaryColor: Colors.teal,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Corrèze Groupers"),
       ),
-      title: "Corrèze Groupers",
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("Corrèze Groupers"),
-        ),
-        body: Column(
+      body: Column(
+        children: <Widget>[
+          Row(children: groupColumns),
+          selectedPositions.isEmpty
+              ? Row()
+              : ProfilePreview(
+                  profile: grouping
+                      .groups[selectedPositions.last.groupInd]
+                          [selectedPositions.last.memberInd]
+                      .profile,
+                  name: grouping
+                      .groups[selectedPositions.last.groupInd]
+                          [selectedPositions.last.memberInd]
+                      .name,
+                ),
+        ],
+      ),
+      drawer: Drawer(
+        child: Column(
           children: <Widget>[
-            Row(children: groupColumns),
-            selectedPositions.isEmpty
-                ? Row()
-                : ProfilePreview(
-                    profile: grouping
-                        .groups[selectedPositions.last.groupInd]
-                            [selectedPositions.last.memberInd]
-                        .profile,
-                    name: grouping
-                        .groups[selectedPositions.last.groupInd]
-                            [selectedPositions.last.memberInd]
-                        .name,
-                  ),
-          ],
-        ),
-        drawer: Drawer(
-          child: Column(
-            children: <Widget>[
-              ListTile(
-                title: Text("Grouping parameters"),
-                leading: Icon(Icons.settings),
-              ),
-              Divider(),
-              ListTile(
-                title: Text("Number of groups"),
-                leading: Icon(Icons.group_add),
-              ),
-              Slider(
+            ListTile(
+              title: Text("Grouping parameters"),
+              leading: Icon(Icons.settings),
+            ),
+            Divider(),
+            ListTile(
+              title: Text("Number of groups"),
+              subtitle: Slider(
                 value: groupCount.toDouble(),
                 min: 8.0,
                 max: 10.0,
@@ -211,71 +225,133 @@ class _AppState extends State<App> {
                 },
                 label: groupCount.toString(),
               ),
-              ListTile(
-                title: Text("Redistribute without ..."),
-                leading: Icon(Icons.people_outline),
+            ),
+            ListTile(
+              title: Text("Redistribute without ..."),
+              subtitle: Column(
+                children: <Widget>[
+                  RadioListTile<Subject>(
+                    value: null,
+                    groupValue: excludedSubject,
+                    onChanged: exclude,
+                    title: Text("None"),
+                  ),
+                  RadioListTile<Subject>(
+                    value: Subject.BIO,
+                    groupValue: excludedSubject,
+                    onChanged: exclude,
+                    title: Text("Biologists"),
+                  ),
+                  RadioListTile<Subject>(
+                    value: Subject.CHM,
+                    groupValue: excludedSubject,
+                    onChanged: exclude,
+                    title: Text("Chemists"),
+                  ),
+                  RadioListTile<Subject>(
+                    value: Subject.PHY,
+                    groupValue: excludedSubject,
+                    onChanged: exclude,
+                    title: Text("Physicists"),
+                  ),
+                ],
               ),
-              RadioListTile<Subject>(
-                value: null,
-                groupValue: excludedSubject,
-                onChanged: exclude,
-                title: Text("None"),
-              ),
-              RadioListTile<Subject>(
-                value: Subject.BIO,
-                groupValue: excludedSubject,
-                onChanged: exclude,
-                title: Text("Biologists"),
-              ),
-              RadioListTile<Subject>(
-                value: Subject.CHM,
-                groupValue: excludedSubject,
-                onChanged: exclude,
-                title: Text("Chemists"),
-              ),
-              RadioListTile<Subject>(
-                value: Subject.PHY,
-                groupValue: excludedSubject,
-                onChanged: exclude,
-                title: Text("Physicists"),
-              ),
-            ],
-          ),
+            ),
+            Divider(),
+            ListTile(
+              title: Text("Information"),
+              leading: Icon(Icons.help),
+              onTap: () => null,
+            ),
+            Divider(),
+          ],
         ),
-        persistentFooterButtons: <Widget>[
-          IconButton(
-            icon: Icon(Icons.file_download),
-            onPressed: null,
-            tooltip: "Save grouping",
-          ),
-          IconButton(
-            icon: Icon(Icons.file_upload),
-            onPressed: null,
-            tooltip: "Load grouping",
-          ),
-          IconButton(
-            icon: Icon(Icons.swap_horiz),
-            onPressed: selectedPositions.length == 2 ? swap : null,
-            tooltip: "Swap",
-          ),
-          IconButton(
-            icon: Icon(Icons.undo),
-            onPressed: swapHistoryPointer >= 0 ? undoSwap : null,
-            tooltip: "Undo swap",
-          ),
-          IconButton(
-            icon: Icon(Icons.redo),
-            onPressed:
-                swapHistoryPointer < swapHistory.length - 1 ? redoSwap : null,
-            tooltip: "Redo swap",
-          ),
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: loading ? null : generateGroups,
-            tooltip: "Redistribute groups",
-          ),
-        ],
       ),
+      persistentFooterButtons: <Widget>[
+        IconButton(
+          icon: Icon(Icons.file_download),
+          onPressed: null,
+          tooltip: "Save grouping",
+        ),
+        IconButton(
+          icon: Icon(Icons.file_upload),
+          onPressed: null,
+          tooltip: "Load grouping",
+        ),
+        IconButton(
+          icon: Icon(Icons.swap_horiz),
+          onPressed: selectedPositions.length == 2 ? swap : null,
+          tooltip: "Swap",
+        ),
+        IconButton(
+          icon: Icon(Icons.undo),
+          onPressed: swapHistoryPointer >= 0 ? undoSwap : null,
+          tooltip: "Undo swap",
+        ),
+        IconButton(
+          icon: Icon(Icons.redo),
+          onPressed:
+              swapHistoryPointer < swapHistory.length - 1 ? redoSwap : null,
+          tooltip: "Redo swap",
+        ),
+        IconButton(
+          icon: Icon(Icons.refresh),
+          onPressed: () => showDialog(
+                context: context,
+                builder: (BuildContext context) => GroupsLostWarning(
+                      generateGroups: generateGroups,
+                      context: context,
+                    ),
+              ),
+          tooltip: "Redistribute groups",
+        ),
+      ],
+    );
+  }
+}
+
+class GroupsLostWarning extends StatefulWidget {
+  final VoidCallback generateGroups;
+  final BuildContext context;
+
+  const GroupsLostWarning({Key key, this.generateGroups, this.context})
+      : super(key: key);
+
+  @override
+  State<GroupsLostWarning> createState() => _GroupsLostWarning();
+}
+
+class _GroupsLostWarning extends State<GroupsLostWarning> {
+  bool loading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text("Groups will be lost."),
+      content: loading ? LinearProgressIndicator() : null,
+      actions: <Widget>[
+        FlatButton(
+          child: Text(
+            "Cancel",
+            style: TextStyle(
+              color: Colors.grey,
+            ),
+          ),
+          onPressed: () {
+            Navigator.of(widget.context).pop();
+          },
+        ),
+        FlatButton(
+          child: Text("Redistribute groups"),
+          onPressed: () {
+            setState(() {
+              loading = true;
+            });
+            widget.generateGroups();
+            Navigator.of(widget.context).pop();
+          },
+        )
+      ],
     );
   }
 }
