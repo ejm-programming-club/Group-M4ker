@@ -26,6 +26,9 @@ class _AppState extends State<App> {
   List<StudentPos> selectedPositions = [];
   List<StudentPos> highlightedPositions = [];
 
+  List<List<StudentPos>> swapHistory = [];
+  int swapHistoryPointer = -1;
+
   void generateGroups() {
     setState(() {
       loading = true;
@@ -36,13 +39,9 @@ class _AppState extends State<App> {
       selectedPositions = [];
       highlightedPositions = [];
       loading = false;
-    });
-  }
 
-  void swap() {
-    setState(() {
-      grouping.swap(selectedPositions[0], selectedPositions[1]);
-      issues = evaluator.findIssues(grouping);
+      swapHistory.clear();
+      swapHistoryPointer = -1;
     });
   }
 
@@ -65,6 +64,40 @@ class _AppState extends State<App> {
       } else {
         highlightedPositions = [];
       }
+    });
+  }
+
+  void swap() {
+    setState(() {
+      grouping.swap(selectedPositions[0], selectedPositions[1]);
+      issues = evaluator.findIssues(grouping);
+
+      swapHistory.removeRange(++swapHistoryPointer, swapHistory.length);
+      swapHistory.add([selectedPositions[0], selectedPositions[1]]);
+    });
+  }
+
+  void undoSwap() {
+    setState(() {
+      selectedPositions = [
+        swapHistory[swapHistoryPointer].first,
+        swapHistory[swapHistoryPointer].last,
+      ];
+      grouping.swap(selectedPositions[0], selectedPositions[1]);
+      issues = evaluator.findIssues(grouping);
+      swapHistoryPointer--;
+    });
+  }
+
+  void redoSwap() {
+    setState(() {
+      swapHistoryPointer++;
+      selectedPositions = [
+        swapHistory[swapHistoryPointer].first,
+        swapHistory[swapHistoryPointer].last,
+      ];
+      grouping.swap(selectedPositions[0], selectedPositions[1]);
+      issues = evaluator.findIssues(grouping);
     });
   }
 
@@ -141,6 +174,15 @@ class _AppState extends State<App> {
           new IconButton(
             icon: Icon(Icons.swap_horiz),
             onPressed: selectedPositions.length == 2 ? swap : null,
+          ),
+          new IconButton(
+            icon: Icon(Icons.undo),
+            onPressed: swapHistoryPointer >= 0 ? undoSwap : null,
+          ),
+          new IconButton(
+            icon: Icon(Icons.redo),
+            onPressed:
+                swapHistoryPointer < swapHistory.length - 1 ? redoSwap : null,
           ),
           new IconButton(
             icon: Icon(Icons.settings),
