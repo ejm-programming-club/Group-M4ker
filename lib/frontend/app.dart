@@ -1,8 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:correze_grouper/backend/utils.dart';
 import 'package:correze_grouper/backend/generator.dart';
 import 'package:correze_grouper/backend/evaluator.dart';
+import 'package:correze_grouper/frontend/dialogs.dart';
 import 'package:correze_grouper/frontend/group.dart';
 import 'package:correze_grouper/frontend/profile.dart';
 
@@ -59,6 +63,8 @@ class _GrouperState extends State<Grouper> {
 
   List<List<StudentPos>> swapHistory = [];
   int swapHistoryPointer = -1;
+
+  String loadedFilename;
 
   void generateGroups() {
     setState(() {
@@ -144,9 +150,73 @@ class _GrouperState extends State<Grouper> {
     });
   }
 
-  void load() {}
+  void load(BuildContext context) async {
+    final directory = await getApplicationDocumentsDirectory();
+    String path = directory.path;
+    List<String> saves;
 
-  void save() {}
+    try {
+      final file = File("$path/saved.json");
+      saves = (jsonDecode(await file.readAsString()) as List)
+          .cast<String>()
+          .toList();
+    } catch (e) {
+      saves = [];
+    }
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => LoadDialog(
+              context: context,
+              filenames: saves,
+              onConfirm: readFrom,
+            ));
+  }
+
+  void save(BuildContext context) async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => SaveDialog(
+              context: context,
+              defaultName: loadedFilename,
+              onConfirm: writeTo,
+            ));
+  }
+
+  void writeTo(String filename) async {
+    final directory = await getApplicationDocumentsDirectory();
+    String path = directory.path;
+    List<String> saves;
+    final file = File("$path/$filename");
+    await file.writeAsString(grouping.toString());
+
+    final savesFile = File("$path/saved.json");
+    try {
+      saves = (jsonDecode(await savesFile.readAsString()) as List)
+          .cast<String>()
+          .toList();
+    } catch (e) {
+      saves = [];
+    }
+    if (!saves.contains(filename)) saves.add(filename);
+    await savesFile.writeAsString(jsonEncode(saves));
+  }
+
+  void readFrom(String filename) async {
+    final directory = await getApplicationDocumentsDirectory();
+    String path = directory.path;
+    final file = File("$path/$filename");
+    final List<List<String>> groups =
+        (jsonDecode(await file.readAsString()) as List)
+            .map((ls) => (ls as List).cast<String>())
+            .toList();
+
+    setState(() {
+      loadedFilename = filename;
+      grouping = fromList(_promoUnmodified, groups);
+      issues = evaluator.findIssues(grouping);
+    });
+  }
 
   List<StudentPos> locateProfile(Profile profile) {
     List<StudentPos> positions = [];
@@ -269,14 +339,14 @@ class _GrouperState extends State<Grouper> {
       ),
       persistentFooterButtons: <Widget>[
         IconButton(
-          icon: Icon(Icons.file_download),
-          onPressed: null,
-          tooltip: "Save grouping",
+          icon: Icon(Icons.file_upload),
+          onPressed: () => load(context),
+          tooltip: "Load groups",
         ),
         IconButton(
-          icon: Icon(Icons.file_upload),
-          onPressed: null,
-          tooltip: "Load grouping",
+          icon: Icon(Icons.file_download),
+          onPressed: grouping.groups.isNotEmpty ? () => save(context) : null,
+          tooltip: "Save groups",
         ),
         IconButton(
           icon: Icon(Icons.swap_horiz),
@@ -298,59 +368,13 @@ class _GrouperState extends State<Grouper> {
           icon: Icon(Icons.refresh),
           onPressed: () => showDialog(
                 context: context,
-                builder: (BuildContext context) => GroupsLostWarning(
+                builder: (BuildContext context) => RedistributeGroupsDialog(
                       generateGroups: generateGroups,
                       context: context,
                     ),
               ),
           tooltip: "Redistribute groups",
         ),
-      ],
-    );
-  }
-}
-
-class GroupsLostWarning extends StatefulWidget {
-  final VoidCallback generateGroups;
-  final BuildContext context;
-
-  const GroupsLostWarning({Key key, this.generateGroups, this.context})
-      : super(key: key);
-
-  @override
-  State<GroupsLostWarning> createState() => _GroupsLostWarning();
-}
-
-class _GroupsLostWarning extends State<GroupsLostWarning> {
-  bool loading = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text("Groups will be lost."),
-      content: loading ? LinearProgressIndicator() : null,
-      actions: <Widget>[
-        FlatButton(
-          child: Text(
-            "Cancel",
-            style: TextStyle(
-              color: Colors.grey,
-            ),
-          ),
-          onPressed: () {
-            Navigator.of(widget.context).pop();
-          },
-        ),
-        FlatButton(
-          child: Text("Redistribute groups"),
-          onPressed: () {
-            setState(() {
-              loading = true;
-            });
-            widget.generateGroups();
-            Navigator.of(widget.context).pop();
-          },
-        )
       ],
     );
   }

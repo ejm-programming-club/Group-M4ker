@@ -96,6 +96,20 @@ class Grouping {
         groups[pos2.groupInd][pos2.memberInd];
     groups[pos2.groupInd][pos2.memberInd] = temp;
   }
+
+  @override
+  String toString() {
+    return "[" +
+        groups
+            .map((members) =>
+                "\n  [" +
+                members
+                    .map((member) => '"' + member.name.toString() + '"')
+                    .join(", ") +
+                "]")
+            .join(',') +
+        "\n]";
+  }
 }
 
 class GroupStats {
