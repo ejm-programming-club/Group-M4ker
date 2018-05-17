@@ -77,6 +77,7 @@ class ProfilePreview extends StatelessWidget {
                 Subject.PHY: phyColor,
               }[profile.group4Subject],
             ),
+            SizedBox(width: 8.0,),
             Chip(
               label: Text(
                 profile.group4Level.toString().split('.').last,
@@ -109,6 +110,7 @@ class ProfilePreview extends StatelessWidget {
                 ),
                 backgroundColor: chmColor,
               ),
+              SizedBox(width: 8.0,),
               Chip(
                 label: Text(
                   profile.group6Level.toString().split('.').last,
