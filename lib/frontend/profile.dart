@@ -17,7 +17,6 @@ class ProfileField extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        Divider(),
         child,
       ],
     );
@@ -32,11 +31,11 @@ class ProfilePreview extends StatelessWidget {
   static final maleColor = Colors.blueAccent[200];
   static final femaleColor = Colors.pinkAccent[200];
   static final bioColor = Colors.redAccent[200];
-  static final chmColor = Colors.amber[400];
+  static final chmColor = Colors.amberAccent[400];
   static final phyColor = Colors.green[400];
   static final slColor = Colors.blue[400];
   static final hlColor = Colors.blueGrey[400];
-  static final textColor = Colors.grey[100];
+  static final textColor = Colors.white;
 
   const ProfilePreview({Key key, this.profile, this.name}) : super(key: key);
 
@@ -44,21 +43,20 @@ class ProfilePreview extends StatelessWidget {
     List<ProfileField> fields = [
       ProfileField(
         header: "Name",
-        child: Card(
-          child: Text(name),
-          elevation: 0.0,
+        child: Chip(
+          label: Text(name),
         ),
       ),
       ProfileField(
         header: "Gender",
-        child: Card(
-            child: Text(
-              profile.gender.toString(),
+        child: Chip(
+            label: Text(
+              profile.gender.toString().split('.').last,
               style: TextStyle(
                 color: textColor,
               ),
             ),
-            color: {
+            backgroundColor: {
               Gender.M: maleColor,
               Gender.F: femaleColor,
             }[profile.gender]),
@@ -67,26 +65,26 @@ class ProfilePreview extends StatelessWidget {
         header: "Group 4",
         child: Row(
           children: <Widget>[
-            Card(
-              child: Text(
-                profile.group4Subject.toString(),
+            Chip(
+              label: Text(
+                profile.group4Subject.toString().split('.').last,
                 style: TextStyle(
                   color: textColor,
                 ),
               ),
-              color: {
+              backgroundColor: {
                 Subject.BIO: bioColor,
                 Subject.PHY: phyColor,
               }[profile.group4Subject],
             ),
-            Card(
-              child: Text(
-                profile.group4Level.toString(),
+            Chip(
+              label: Text(
+                profile.group4Level.toString().split('.').last,
                 style: TextStyle(
                   color: textColor,
                 ),
               ),
-              color: {
+              backgroundColor: {
                 Level.SL: slColor,
                 Level.HL: hlColor,
               }[profile.group4Level],
@@ -102,23 +100,23 @@ class ProfilePreview extends StatelessWidget {
           header: "Group 6",
           child: Row(
             children: <Widget>[
-              Card(
-                child: Text(
-                  profile.group6Subject.toString(),
+              Chip(
+                label: Text(
+                  profile.group6Subject.toString().split('.').last,
                   style: TextStyle(
                     color: textColor,
                   ),
                 ),
-                color: chmColor,
+                backgroundColor: chmColor,
               ),
-              Card(
-                child: Text(
-                  profile.group6Level.toString(),
+              Chip(
+                label: Text(
+                  profile.group6Level.toString().split('.').last,
                   style: TextStyle(
                     color: textColor,
                   ),
                 ),
-                color: {
+                backgroundColor: {
                   Level.SL: slColor,
                   Level.HL: hlColor,
                 }[profile.group6Level],
@@ -132,10 +130,13 @@ class ProfilePreview extends StatelessWidget {
     if (profile.isStrongLeader) {
       fields.add(ProfileField(
         header: "Strong leader",
-        child: Icon(
-          Icons.check,
-          color: Colors.green,
-        ),
+        child: Chip(
+          label: Icon(
+            Icons.check,
+            color: Colors.green,
+          ),
+          backgroundColor: Colors.white,
+        )
       ));
     }
 

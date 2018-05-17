@@ -135,16 +135,16 @@ class _AppState extends State<App> {
         children: groupBoxes.sublist(i, min(i + 2, groupBoxes.length)),
       ));
     }
-    return new MaterialApp(
+    return MaterialApp(
       theme: ThemeData(
         primaryColor: Colors.teal,
       ),
       title: "Corrèze Groupers",
       home: Scaffold(
-        appBar: new AppBar(
+        appBar: AppBar(
           title: Text("Corrèze Groupers"),
         ),
-        body: new Column(
+        body: Column(
           children: <Widget>[
             Row(children: groupColumns),
             selectedPositions.isEmpty
@@ -161,34 +161,35 @@ class _AppState extends State<App> {
                   ),
           ],
         ),
-        floatingActionButton: loading ? CircularProgressIndicator() : null,
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.settings),
+          onPressed: () {
+
+          },
+        ),
         persistentFooterButtons: <Widget>[
-          new IconButton(
+          IconButton(
             icon: Icon(Icons.file_download),
             onPressed: null,
           ),
-          new IconButton(
+          IconButton(
             icon: Icon(Icons.file_upload),
             onPressed: null,
           ),
-          new IconButton(
+          IconButton(
             icon: Icon(Icons.swap_horiz),
             onPressed: selectedPositions.length == 2 ? swap : null,
           ),
-          new IconButton(
+          IconButton(
             icon: Icon(Icons.undo),
             onPressed: swapHistoryPointer >= 0 ? undoSwap : null,
           ),
-          new IconButton(
+          IconButton(
             icon: Icon(Icons.redo),
             onPressed:
                 swapHistoryPointer < swapHistory.length - 1 ? redoSwap : null,
           ),
-          new IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: null,
-          ),
-          new IconButton(
+          IconButton(
             icon: Icon(Icons.refresh),
             onPressed: loading ? null : generateGroups,
           ),
