@@ -96,6 +96,20 @@ class Grouping {
         groups[pos2.groupInd][pos2.memberInd];
     groups[pos2.groupInd][pos2.memberInd] = temp;
   }
+
+  @override
+  String toString() {
+    return "[" +
+        groups
+            .map((members) =>
+                "\n  [" +
+                members
+                    .map((member) => '"' + member.name.toString() + '"')
+                    .join(", ") +
+                "]")
+            .join(',') +
+        "\n]";
+  }
 }
 
 class GroupStats {
@@ -291,7 +305,7 @@ Student findFrom(List<Student> promo, String name) {
   for (Student student in promo) {
     if (student.name == name) return student;
   }
-  return null;
+  throw Exception;
 }
 
 Grouping fromList(List<Student> promo, List<List<String>> groups) => Grouping(

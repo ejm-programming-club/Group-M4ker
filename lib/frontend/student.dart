@@ -18,8 +18,8 @@ class StudentEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new FlatButton(
-      child: new Text(
+    return FlatButton(
+      child: Text(
         studentName,
         style: TextStyle(
           decoration: isHighlighted ? TextDecoration.underline : null,

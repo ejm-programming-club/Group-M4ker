@@ -31,25 +31,28 @@ class GroupBox extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-                Tooltip(
-                  child: Text(
-                    "Group #${groupInd + 1}",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      decoration:
-                          issues.isEmpty ? null : TextDecoration.underline,
-                      decorationColor: issues.isEmpty ? null : Colors.red,
-                      decorationStyle: TextDecorationStyle.wavy,
-                    ),
-                  ),
-                  message: issues.isEmpty
-                      ? "✅"
-                      : issues.map((String s) => "❌ $s").join("\n"),
+            Tooltip(
+              child: Text(
+                "Group ${String.fromCharCode(65 + groupInd)}",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  decoration: issues.isEmpty ? null : TextDecoration.underline,
+                  decorationColor: issues.isEmpty ? null : Colors.red,
+                  decorationStyle: TextDecorationStyle.wavy,
                 ),
-                Divider(),
-              ] +
-              members.asMap().entries.map(
-                (MapEntry<int, Student> member) {
+              ),
+              message: issues.isEmpty
+                  ? "✅"
+                  : issues.map((String s) => "❌ $s").join("\n"),
+              preferBelow: false,
+            ),
+            Divider(),
+            Expanded(
+              child: ListView(
+                children: members
+                    .asMap()
+                    .entries
+                    .map((MapEntry<int, Student> member) {
                   List<String> name = member.value.name.split(' ');
                   var firstName = name.last;
                   var abbreviatedLastName = name.first[0] + '.';
@@ -62,8 +65,10 @@ class GroupBox extends StatelessWidget {
                     onTapCallback: () => onStudentSelectCallback(
                         StudentPos(groupInd, member.key)),
                   );
-                },
-              ).toList(),
+                }).toList(),
+              ),
+            ),
+          ],
         ),
       ),
     );
