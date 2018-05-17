@@ -2,7 +2,7 @@ import 'utils.dart';
 export 'generators/min_jealousy.dart';
 
 abstract class Generator {
-  final List<Student> promo;
+  List<Student> promo;
 
   Generator(this.promo);
 

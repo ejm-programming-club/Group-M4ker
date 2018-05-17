@@ -33,7 +33,7 @@ class GroupBox extends StatelessWidget {
           children: <Widget>[
             Tooltip(
               child: Text(
-                "Group #${groupInd + 1}",
+                "Group ${String.fromCharCode(65 + groupInd)}",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   decoration: issues.isEmpty ? null : TextDecoration.underline,
@@ -48,7 +48,7 @@ class GroupBox extends StatelessWidget {
             ),
             Divider(),
             Expanded(
-              child: Column(
+              child: ListView(
                 children: members
                     .asMap()
                     .entries

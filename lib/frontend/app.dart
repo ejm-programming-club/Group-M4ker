@@ -12,11 +12,23 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  List<Student> promo = promo2019;
+  List<Student> _promo = promo2019;
+  List<Student> _promoUnmodified = promo2019;
+
+  List<Student> get promo => _promo;
+  set promo(List<Student> promo) {
+    setState(() {
+      _promo = promo;
+      evaluator.promo = promo;
+      generator.promo = promo;
+    });
+  }
+
   Evaluator evaluator = MeanEvaluator(promo2019);
   Generator generator = MinJealousyGenerator(promo2019);
 
   int groupCount = 10;
+  Subject excludedSubject;
 
   bool loading = false;
 
@@ -101,6 +113,20 @@ class _AppState extends State<App> {
     });
   }
 
+  void exclude(Subject subject) {
+    setState(() {
+      excludedSubject = subject;
+      if (subject != null)
+        promo = _promoUnmodified
+            .where((Student student) =>
+                student.profile.group4Subject != subject &&
+                student.profile.group6Subject != subject)
+            .toList();
+      else
+        promo = _promoUnmodified;
+    });
+  }
+
   List<StudentPos> locateProfile(Profile profile) {
     List<StudentPos> positions = [];
     for (int groupInd = 0; groupInd < grouping.groups.length; groupInd++) {
@@ -161,37 +187,92 @@ class _AppState extends State<App> {
                   ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.settings),
-          onPressed: () {
-
-          },
+        drawer: Drawer(
+          child: Column(
+            children: <Widget>[
+              ListTile(
+                title: Text("Grouping parameters"),
+                leading: Icon(Icons.settings),
+              ),
+              Divider(),
+              ListTile(
+                title: Text("Number of groups"),
+                leading: Icon(Icons.group_add),
+              ),
+              Slider(
+                value: groupCount.toDouble(),
+                min: 8.0,
+                max: 10.0,
+                divisions: 2,
+                onChanged: (double value) {
+                  setState(() {
+                    groupCount = value.toInt();
+                  });
+                },
+                label: groupCount.toString(),
+              ),
+              ListTile(
+                title: Text("Redistribute without ..."),
+                leading: Icon(Icons.people_outline),
+              ),
+              RadioListTile<Subject>(
+                value: null,
+                groupValue: excludedSubject,
+                onChanged: exclude,
+                title: Text("None"),
+              ),
+              RadioListTile<Subject>(
+                value: Subject.BIO,
+                groupValue: excludedSubject,
+                onChanged: exclude,
+                title: Text("Biologists"),
+              ),
+              RadioListTile<Subject>(
+                value: Subject.CHM,
+                groupValue: excludedSubject,
+                onChanged: exclude,
+                title: Text("Chemists"),
+              ),
+              RadioListTile<Subject>(
+                value: Subject.PHY,
+                groupValue: excludedSubject,
+                onChanged: exclude,
+                title: Text("Physicists"),
+              ),
+            ],
+          ),
         ),
         persistentFooterButtons: <Widget>[
           IconButton(
             icon: Icon(Icons.file_download),
             onPressed: null,
+            tooltip: "Save grouping",
           ),
           IconButton(
             icon: Icon(Icons.file_upload),
             onPressed: null,
+            tooltip: "Load grouping",
           ),
           IconButton(
             icon: Icon(Icons.swap_horiz),
             onPressed: selectedPositions.length == 2 ? swap : null,
+            tooltip: "Swap",
           ),
           IconButton(
             icon: Icon(Icons.undo),
             onPressed: swapHistoryPointer >= 0 ? undoSwap : null,
+            tooltip: "Undo swap",
           ),
           IconButton(
             icon: Icon(Icons.redo),
             onPressed:
                 swapHistoryPointer < swapHistory.length - 1 ? redoSwap : null,
+            tooltip: "Redo swap",
           ),
           IconButton(
             icon: Icon(Icons.refresh),
             onPressed: loading ? null : generateGroups,
+            tooltip: "Redistribute groups",
           ),
         ],
       ),

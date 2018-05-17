@@ -7,7 +7,7 @@ import '../generator.dart';
 /// males, females, biologists, chemists, physicists, SLs, HLs, leaders
 /// in each pair of groups.
 class MinJealousyGenerator implements Generator {
-  final List<Student> promo;
+  List<Student> promo;
 
   MinJealousyGenerator(this.promo);
 

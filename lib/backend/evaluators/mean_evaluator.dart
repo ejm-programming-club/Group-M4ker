@@ -4,14 +4,12 @@ import '../evaluator.dart';
 class MeanEvaluator implements Evaluator {
   @override
   List<Student> promo;
-  GroupStats promoStats;
 
-  MeanEvaluator(this.promo) {
-    promoStats = GroupStats.of(promo);
-  }
+  MeanEvaluator(this.promo);
 
   @override
   List<List<String>> findIssues(Grouping grouping) {
+    GroupStats promoStats = GroupStats.of(promo);
     var errors = <List<String>>[];
     for (List<Student> group in grouping.groups) {
       var groupErrors = <String>[];
