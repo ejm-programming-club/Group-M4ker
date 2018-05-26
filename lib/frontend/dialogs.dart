@@ -20,7 +20,11 @@ class _RedistributeGroupsDialogState extends State<RedistributeGroupsDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Groups will be lost."),
+      title: Text(
+        loading
+            ? "Making groups ..."
+            : "Groups will be lost.\n Confirm action?",
+      ),
       content: loading ? LinearProgressIndicator() : null,
       actions: <Widget>[
         FlatButton(
@@ -30,19 +34,23 @@ class _RedistributeGroupsDialogState extends State<RedistributeGroupsDialog> {
               color: Colors.grey,
             ),
           ),
-          onPressed: () {
-            Navigator.of(widget.context).pop();
-          },
+          onPressed: loading
+              ? null
+              : () {
+                  Navigator.of(widget.context).pop();
+                },
         ),
         FlatButton(
           child: Text("Redistribute groups"),
-          onPressed: () {
-            setState(() {
-              loading = true;
-            });
-            widget.generateGroups();
-            Navigator.of(widget.context).pop();
-          },
+          onPressed: loading
+              ? null
+              : () {
+                  setState(() {
+                    loading = true;
+                  });
+                  widget.generateGroups();
+                  Navigator.of(widget.context).pop();
+                },
         )
       ],
     );

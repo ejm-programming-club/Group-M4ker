@@ -1,14 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:group_m4ker/backend/utils.dart';
-import 'package:group_m4ker/backend/generator.dart';
 import 'package:group_m4ker/backend/evaluator.dart';
+import 'package:group_m4ker/backend/generator.dart';
+import 'package:group_m4ker/backend/utils.dart';
 import 'package:group_m4ker/frontend/dialogs.dart';
 import 'package:group_m4ker/frontend/group.dart';
 import 'package:group_m4ker/frontend/profile.dart';
+import 'package:path_provider/path_provider.dart';
 
 class App extends StatelessWidget {
   @override
@@ -43,7 +44,15 @@ class _GrouperState extends State<Grouper> {
   }
 
   _GrouperState() {
-    _promo = _promoUnmodified = promo2019;
+    _promo = _promoUnmodified = [
+      Student(
+          name: "Foo Bar",
+          profile: Profile(
+            gender: Gender.M,
+            bioLevel: Level.SL,
+            chmLevel: Level.HL,
+          ))
+    ];
 
     evaluator = MeanEvaluator(promo);
     generator = MinJealousyGenerator(promo);
@@ -141,9 +150,7 @@ class _GrouperState extends State<Grouper> {
       excludedSubject = subject;
       if (subject != null)
         promo = _promoUnmodified
-            .where((Student student) =>
-                student.profile.group4Subject != subject &&
-                student.profile.group6Subject != subject)
+            .where((Student student) => !student.takes(subject))
             .toList();
       else
         promo = _promoUnmodified;
@@ -213,7 +220,7 @@ class _GrouperState extends State<Grouper> {
 
     setState(() {
       loadedFilename = filename;
-      grouping = fromList(_promoUnmodified, groups);
+      /*grouping = fromList(_promoUnmodified, groups);*/
       issues = evaluator.findIssues(grouping);
     });
   }
@@ -368,6 +375,7 @@ class _GrouperState extends State<Grouper> {
           icon: Icon(Icons.refresh),
           onPressed: () => showDialog(
                 context: context,
+                barrierDismissible: false,
                 builder: (BuildContext context) => RedistributeGroupsDialog(
                       generateGroups: generateGroups,
                       context: context,

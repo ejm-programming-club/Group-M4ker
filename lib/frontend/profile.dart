@@ -61,59 +61,39 @@ class ProfilePreview extends StatelessWidget {
               Gender.F: femaleColor,
             }[profile.gender]),
       ),
-      ProfileField(
-        header: "Group 4",
-        child: Row(
-          children: <Widget>[
-            Chip(
-              label: Text(
-                profile.group4Subject.toString().split('.').last,
-                style: TextStyle(
-                  color: textColor,
-                ),
-              ),
-              backgroundColor: {
-                Subject.BIO: bioColor,
-                Subject.PHY: phyColor,
-              }[profile.group4Subject],
-            ),
-            SizedBox(width: 8.0,),
-            Chip(
-              label: Text(
-                profile.group4Level.toString().split('.').last,
-                style: TextStyle(
-                  color: textColor,
-                ),
-              ),
-              backgroundColor: {
-                Level.SL: slColor,
-                Level.HL: hlColor,
-              }[profile.group4Level],
-            ),
-          ],
-        ),
-      ),
     ];
 
-    if (profile.group6Subject != null) {
+    for (Subject subject in Subject.values) {
+      Level level;
+      if (subject == Subject.BIO) level = profile.bioLevel;
+      if (subject == Subject.CHM) level = profile.chmLevel;
+      if (subject == Subject.PHY) level = profile.phyLevel;
+      if (level == null) continue;
+
       fields.add(
         ProfileField(
-          header: "Group 6",
+          header: "Subject",
           child: Row(
             children: <Widget>[
               Chip(
                 label: Text(
-                  profile.group6Subject.toString().split('.').last,
+                  subject.toString().split('.').last,
                   style: TextStyle(
                     color: textColor,
                   ),
                 ),
-                backgroundColor: chmColor,
+                backgroundColor: {
+                  Subject.BIO: bioColor,
+                  Subject.CHM: chmColor,
+                  Subject.PHY: phyColor,
+                }[subject],
               ),
-              SizedBox(width: 8.0,),
+              SizedBox(
+                width: 8.0,
+              ),
               Chip(
                 label: Text(
-                  profile.group6Level.toString().split('.').last,
+                  level.toString().split('.').last,
                   style: TextStyle(
                     color: textColor,
                   ),
@@ -121,7 +101,7 @@ class ProfilePreview extends StatelessWidget {
                 backgroundColor: {
                   Level.SL: slColor,
                   Level.HL: hlColor,
-                }[profile.group6Level],
+                }[level],
               ),
             ],
           ),
@@ -131,15 +111,14 @@ class ProfilePreview extends StatelessWidget {
 
     if (profile.isStrongLeader) {
       fields.add(ProfileField(
-        header: "Strong leader",
-        child: Chip(
-          label: Icon(
-            Icons.check,
-            color: Colors.green,
-          ),
-          backgroundColor: Colors.white,
-        )
-      ));
+          header: "Strong leader",
+          child: Chip(
+            label: Icon(
+              Icons.check,
+              color: Colors.green,
+            ),
+            backgroundColor: Colors.white,
+          )));
     }
 
     return Row(
