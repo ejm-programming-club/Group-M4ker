@@ -30,30 +30,9 @@ class Grouper extends StatefulWidget {
 }
 
 class _GrouperState extends State<Grouper> {
-  List<Student> _promo;
-  List<Student> _promoUnmodified;
-
-  List<Student> get promo => _promo;
-
-  set promo(List<Student> promo) {
-    setState(() {
-      _promo = promo;
-      evaluator.promo = promo;
-      generator.promo = promo;
-    });
-  }
+  Promo promo;
 
   _GrouperState() {
-    _promo = _promoUnmodified = [
-      Student(
-          name: "Foo Bar",
-          profile: Profile(
-            gender: Gender.M,
-            bioLevel: Level.SL,
-            chmLevel: Level.HL,
-          ))
-    ];
-
     evaluator = MeanEvaluator(promo);
     generator = MinJealousyGenerator(promo);
   }
@@ -147,13 +126,13 @@ class _GrouperState extends State<Grouper> {
 
   void exclude(Subject subject) {
     setState(() {
-      excludedSubject = subject;
-      if (subject != null)
-        promo = _promoUnmodified
-            .where((Student student) => !student.takes(subject))
-            .toList();
-      else
-        promo = _promoUnmodified;
+      Promo newPromo = Promo(
+        name: "${promo.name} without $subject",
+        students:
+            promo.students.where((student) => !student.takes(subject)).toList(),
+      );
+      generator.promo = newPromo;
+      evaluator.promo = newPromo;
     });
   }
 

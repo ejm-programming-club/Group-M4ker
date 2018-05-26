@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 enum Gender { M, F }
 enum Level { SL, HL }
 enum Subject { BIO, CHM, PHY }
@@ -182,4 +184,12 @@ class GroupStats {
       strongLeadersCount: strongLeadersCount,
     );
   }
+}
+
+/// Une promotion des étudiants / class of a certain year / 一届学生
+class Promo {
+  final String name;
+  final List<Student> students;
+
+  Promo({this.name, @required this.students});
 }

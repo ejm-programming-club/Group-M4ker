@@ -1,5 +1,5 @@
-import '../utils.dart';
 import '../generator.dart';
+import '../utils.dart';
 
 /// Generates groups aiming to minimise the jealousy between groups.
 ///
@@ -7,7 +7,7 @@ import '../generator.dart';
 /// males, females, biologists, chemists, physicists, SLs, HLs, leaders
 /// in each pair of groups.
 class MinJealousyGenerator implements Generator {
-  List<Student> promo;
+  Promo promo;
 
   MinJealousyGenerator(this.promo);
 
@@ -47,11 +47,12 @@ class MinJealousyGenerator implements Generator {
   Grouping generate({int numberOfGroups: 10}) {
     List<List<Student>> groups = <List<Student>>[];
     for (int i = 0; i < numberOfGroups; i++) groups.add([]);
-    promo.shuffle();
+    List<Student> students = List.from(promo.students);
+    students.shuffle();
 
     // Fill
     int i = 0;
-    for (Student student in promo) {
+    for (Student student in students) {
       groups[i].add(student);
 
       i++;

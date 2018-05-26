@@ -1,11 +1,11 @@
 import 'utils.dart';
+
 export 'generators/min_jealousy.dart';
 
 abstract class Generator {
-  List<Student> promo;
+  Promo promo;
 
   Generator(this.promo);
 
-  Grouping generate(
-      {int numberOfGroups = 10});
+  Grouping generate({int numberOfGroups = 10});
 }

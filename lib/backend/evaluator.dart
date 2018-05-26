@@ -1,8 +1,9 @@
 import 'utils.dart';
+
 export 'evaluators/mean_evaluator.dart';
 
 abstract class Evaluator {
-  List<Student> promo;
+  Promo promo;
 
   Evaluator(this.promo);
 

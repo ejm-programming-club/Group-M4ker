@@ -1,20 +1,20 @@
-import '../utils.dart';
 import '../evaluator.dart';
+import '../utils.dart';
 
 class MeanEvaluator implements Evaluator {
   @override
-  List<Student> promo;
+  Promo promo;
 
   MeanEvaluator(this.promo);
 
   @override
   List<List<String>> findIssues(Grouping grouping) {
-    GroupStats promoStats = GroupStats.of(promo);
+    GroupStats promoStats = GroupStats.of(promo.students);
     var errors = <List<String>>[];
     for (List<Student> group in grouping.groups) {
       var groupErrors = <String>[];
       var groupStats = GroupStats.of(group);
-      var sizeCoeff = group.length / promo.length;
+      var sizeCoeff = group.length / promo.students.length;
 
       double idealMaleCount = promoStats.maleCount * sizeCoeff;
       double idealFemaleCount = promoStats.femaleCount * sizeCoeff;
@@ -31,7 +31,7 @@ class MeanEvaluator implements Evaluator {
       if ((groupStats.femaleCount - idealFemaleCount).abs() >= 1)
         groupErrors
             .add("Expected around ${idealFemaleCount.toStringAsFixed(2)} "
-            "females; got ${groupStats
+                "females; got ${groupStats
             .femaleCount}");
 
       if ((groupStats.bioCount - idealBioCount).abs() >= 1)
@@ -40,7 +40,7 @@ class MeanEvaluator implements Evaluator {
       if ((groupStats.chmCount - idealChmCount).abs() >= 1)
         groupErrors
             .add("Expected around ${idealChmCount.toStringAsFixed(2)} chemists;"
-            " got ${groupStats.chmCount}");
+                " got ${groupStats.chmCount}");
       if ((groupStats.phyCount - idealPhyCount).abs() >= 1)
         groupErrors.add("Expected around ${idealPhyCount.toStringAsFixed(2)} "
             "physicists; got ${groupStats.phyCount}");
@@ -48,16 +48,16 @@ class MeanEvaluator implements Evaluator {
       if ((groupStats.slCount - idealSLCount).abs() >= 1)
         groupErrors
             .add("Expected around ${idealSLCount.toStringAsFixed(2)} SLs; "
-            "got ${groupStats.slCount}");
+                "got ${groupStats.slCount}");
       if ((groupStats.hlCount - idealHLCount).abs() >= 1)
         groupErrors
             .add("Expected around ${idealHLCount.toStringAsFixed(2)} HLs; "
-            "got ${groupStats.hlCount}");
+                "got ${groupStats.hlCount}");
 
       if ((groupStats.strongLeadersCount - idealLeadersCount).abs() >= 1)
         groupErrors.add(
             "Expected around ${idealLeadersCount.toStringAsFixed(2)} strong "
-                "leaders; got ${groupStats.strongLeadersCount}");
+            "leaders; got ${groupStats.strongLeadersCount}");
 
       errors.add(groupErrors);
     }
