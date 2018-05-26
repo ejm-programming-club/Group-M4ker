@@ -1,5 +1,5 @@
-name: correze_grouper
-description: Group generator for IB&#x27;s fieldtrip to Corrèze
+name: group_m4ker
+description: Group generator for IB group 4 project / fieldtrip
 
 dependencies:
   flutter:

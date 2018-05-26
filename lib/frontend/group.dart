@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:correze_grouper/backend/utils.dart';
-import 'package:correze_grouper/frontend/student.dart';
+import 'package:group_m4ker/backend/utils.dart';
+import 'package:group_m4ker/frontend/student.dart';
 
 typedef void OnStudentSelectCallback(StudentPos pos);
 

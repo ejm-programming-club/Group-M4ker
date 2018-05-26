@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:correze_grouper/backend/utils.dart';
+import 'package:group_m4ker/backend/utils.dart';
 
 class ProfileField extends StatelessWidget {
   final String header;

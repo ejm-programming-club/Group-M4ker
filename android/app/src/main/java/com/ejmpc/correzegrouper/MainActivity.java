@@ -1,4 +1,4 @@
-package com.ejmpc.correzegrouper;
+package com.ejm_pc.group_m4ker;
 
 import android.os.Bundle;
 

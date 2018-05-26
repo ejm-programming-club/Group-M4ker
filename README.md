@@ -1,8 +1,3 @@
-# Corrèze Grouper
+# Group M4ker
 
-Group generator for IB's fieldtrip to Corrèze
-
-## Getting Started
-
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+Group generator for IB's annual fieldtrip.

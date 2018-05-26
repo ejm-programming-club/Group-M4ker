@@ -3,12 +3,12 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:correze_grouper/backend/utils.dart';
-import 'package:correze_grouper/backend/generator.dart';
-import 'package:correze_grouper/backend/evaluator.dart';
-import 'package:correze_grouper/frontend/dialogs.dart';
-import 'package:correze_grouper/frontend/group.dart';
-import 'package:correze_grouper/frontend/profile.dart';
+import 'package:group_m4ker/backend/utils.dart';
+import 'package:group_m4ker/backend/generator.dart';
+import 'package:group_m4ker/backend/evaluator.dart';
+import 'package:group_m4ker/frontend/dialogs.dart';
+import 'package:group_m4ker/frontend/group.dart';
+import 'package:group_m4ker/frontend/profile.dart';
 
 class App extends StatelessWidget {
   @override
@@ -17,7 +17,7 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.teal,
       ),
-      title: "Corrèze Groupers",
+      title: "Group M4ker",
       home: Grouper(),
     );
   }
@@ -254,7 +254,7 @@ class _GrouperState extends State<Grouper> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text("Corrèze Groupers"),
+        title: Text("Group M4ker"),
       ),
       body: Column(
         children: <Widget>[

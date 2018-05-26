@@ -1,8 +1,8 @@
 import 'package:test/test.dart';
 
-import 'package:correze_grouper/backend/utils.dart';
-import 'package:correze_grouper/backend/generator.dart';
-import 'package:correze_grouper/backend/evaluator.dart';
+import 'package:group_m4ker/backend/utils.dart';
+import 'package:group_m4ker/backend/generator.dart';
+import 'package:group_m4ker/backend/evaluator.dart';
 
 void main() {
   test("CSV", () {
