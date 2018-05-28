@@ -1,11 +1,15 @@
 name: group_m4ker
-description: Group generator for IB group 4 project / fieldtrip
+description: Group Maker
 
 dependencies:
   flutter:
     sdk: flutter
 
   path_provider: ^0.4.0
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^0.1.2
 
 dev_dependencies:
   flutter_test:
@@ -51,5 +55,5 @@ flutter:
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #
-  # For details regarding fonts from package dependencies, 
+  # For details regarding fonts from package dependencies,
   # see https://flutter.io/custom-fonts/#from-packages
