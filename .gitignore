@@ -10,4 +10,4 @@ build/
 
 .idea
 
-gdrive_keys.json
+secrets.txt
