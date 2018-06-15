@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:group_m4ker/frontend/drive.dart';
 import 'package:group_m4ker/backend/evaluator.dart';
 import 'package:group_m4ker/backend/generator.dart';
 import 'package:group_m4ker/backend/utils.dart';
@@ -30,11 +31,18 @@ class Grouper extends StatefulWidget {
 }
 
 class _GrouperState extends State<Grouper> {
-  Promo promo;
+  Promo _promo;
 
-  _GrouperState() {
+  Promo get promo => _promo;
+
+  set promo(Promo promo) {
+    _promo = promo;
     evaluator = MeanEvaluator(promo);
     generator = MinJealousyGenerator(promo);
+  }
+
+  _GrouperState() {
+    loadPromoFromSavedCSV();
   }
 
   Evaluator evaluator;
@@ -244,7 +252,10 @@ class _GrouperState extends State<Grouper> {
       ),
       body: Column(
         children: <Widget>[
-          Row(children: groupColumns),
+          Row(
+            children: groupColumns,
+            crossAxisAlignment: CrossAxisAlignment.start,
+          ),
           selectedPositions.isEmpty
               ? Row()
               : ProfilePreview(
@@ -320,6 +331,10 @@ class _GrouperState extends State<Grouper> {
               onTap: () => null,
             ),
             Divider(),
+            ListTile(
+                title: Text("Load data from Drive"),
+                leading: Icon(Icons.sync),
+                onTap: () => driveSignIn(context)),
           ],
         ),
       ),
@@ -364,5 +379,11 @@ class _GrouperState extends State<Grouper> {
         ),
       ],
     );
+  }
+
+  void loadPromoFromSavedCSV() async {
+    final dir = await getApplicationDocumentsDirectory();
+    String promo2019CSV = await File("${dir.path}/promo.csv").readAsString();
+    promo = promoFromCsv(promo2019CSV);
   }
 }

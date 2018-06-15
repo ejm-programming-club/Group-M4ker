@@ -188,8 +188,53 @@ class GroupStats {
 
 /// Une promotion des étudiants / class of a certain year / 一届学生
 class Promo {
-  final String name;
   final List<Student> students;
 
-  Promo({this.name, @required this.students});
+  Promo({@required this.students});
 }
+
+bool isNull(String s) => s.length == 0 || s == "NA";
+
+Promo promoFromCsv(String csv) {
+  List<Student> students = <Student>[];
+
+  for (String row in csv.split('\n').sublist(1)) {
+    // Student,M/F,BIO Level,BIO Group,CHM Level,PHY Level,email
+    List<String> fields = row.split(',');
+    Level bioLevel, chmLevel, phyLevel;
+
+    if (!isNull(fields[2])) {
+      bioLevel = fields[2] == "SL" ? Level.SL : Level.HL;
+    } else {
+      phyLevel = fields[5] == "SL" ? Level.SL : Level.HL;
+    }
+
+    if (!isNull(fields[4])) {
+      chmLevel = fields[4] == "SL" ? Level.SL : Level.HL;
+    }
+
+    students.add(Student(
+        name: fields[0],
+        profile: Profile(
+          gender: fields[1] == "M" ? Gender.M : Gender.F,
+          bioLevel: bioLevel,
+          chmLevel: chmLevel,
+          phyLevel: phyLevel,
+          isStrongLeader: false, // TODO
+        )));
+  }
+  return Promo(students: students);
+}
+
+Student findFrom(List<Student> promo, String name) {
+  for (Student student in promo) {
+    if (student.name == name) return student;
+  }
+  throw Exception;
+}
+
+Grouping fromList(List<Student> promo, List<List<String>> groups) => Grouping(
+    groups
+        .map((List<String> group) =>
+        group.map((String name) => findFrom(promo, name)).toList())
+        .toList());
