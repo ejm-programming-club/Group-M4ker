@@ -45,7 +45,7 @@ class _GrouperState extends State<Grouper> {
   }
 
   _GrouperState() {
-    loadPromoFromSavedCSV();
+    loadPromo();
   }
 
   Evaluator evaluator;
@@ -138,8 +138,7 @@ class _GrouperState extends State<Grouper> {
   void exclude(Subject subject) {
     setState(() {
       Promo newPromo = Promo(
-        students:
-            promo.students.where((student) => !student.takes(subject)).toList(),
+        promo.students.where((student) => !student.takes(subject)).toList(),
       );
       generator.promo = newPromo;
       evaluator.promo = newPromo;
@@ -338,7 +337,7 @@ class _GrouperState extends State<Grouper> {
                 leading: Icon(Icons.sync),
                 onTap: () {
                   driveSignIn(context);
-                  loadPromoFromSavedCSV();
+                  loadPromo();
                 }),
             Divider(),
             ListTile(
@@ -348,18 +347,22 @@ class _GrouperState extends State<Grouper> {
                   ? () {
                       showDialog(
                         context: context,
+                        barrierDismissible: false,
                         builder: (BuildContext context) => AlertDialog(
                               title: Text("Class"),
                               content: SizedBox(
                                 height:
                                     MediaQuery.of(context).size.height * 0.8,
                                 width: MediaQuery.of(context).size.width * 0.9,
-                                child: ListView(
-                                  children: <Widget>[
-                                    PromoEditor(
-                                      promo: promo,
-                                    ),
-                                  ],
+                                child: PromoEditor(
+                                  promo: promo,
+                                  onSave: (Promo newPromo) {
+                                    setState(() {
+                                      promo = newPromo;
+                                      savePromo();
+                                      exclude(excludedSubject);
+                                    });
+                                  },
                                 ),
                               ),
                             ),
@@ -415,14 +418,21 @@ class _GrouperState extends State<Grouper> {
     );
   }
 
-  void loadPromoFromSavedCSV() async {
+  /// load promo / class from saved csv.
+  void loadPromo() async {
     final dir = await getApplicationDocumentsDirectory();
     try {
       String promo2019CSV = await File("${dir.path}/promo.csv").readAsString();
       promo = Promo.fromCSV(promo2019CSV);
-//      File("${dir.path}/promo.csv").writeAsString(promo.toCSV());
     } catch (e) {
       print("Failed to load");
     }
+  }
+
+  /// save promo / class to csv.
+  void savePromo() async {
+    final dir = await getApplicationDocumentsDirectory();
+    final file = File("${dir.path}/promo.csv");
+    file.writeAsString(promo.toCSV());
   }
 }

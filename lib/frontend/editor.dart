@@ -3,8 +3,9 @@ import 'package:group_m4ker/backend/utils.dart';
 
 class PromoEditor extends StatefulWidget {
   final Promo promo;
+  final SingleArgCallback<Promo> onSave;
 
-  const PromoEditor({Key key, this.promo}) : super(key: key);
+  const PromoEditor({Key key, this.promo, this.onSave}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _PromoEditorState(
@@ -21,6 +22,7 @@ class _PromoEditorState extends State<PromoEditor> {
   int sortedColumnIndex = 0;
   bool sortedAscending = true;
   String selectedName;
+  bool edited = false;
 
   _PromoEditorState(this.students);
 
@@ -54,111 +56,152 @@ class _PromoEditorState extends State<PromoEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return DataTable(
-      sortAscending: sortedAscending,
-      sortColumnIndex: sortedColumnIndex,
-      columns: <DataColumn>[
-        DataColumn(
-          label: Text("Name"),
-          numeric: false,
-          onSort: sortStudents,
+    return new ListView(
+      children: <Widget>[
+        ButtonBar(
+          children: <Widget>[
+            FlatButton(
+              child: Text("Cancel"),
+              textColor: Colors.grey,
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text("Update class"),
+              textColor: Colors.blue,
+              onPressed: edited
+                  ? () {
+                      widget.onSave(Promo(students));
+                      Navigator.of(context).pop();
+                    }
+                  : null,
+            ),
+          ],
         ),
-        DataColumn(
-          label: Text("Gender"),
-          numeric: false,
-          onSort: sortStudents,
-        ),
-        DataColumn(
-          label: Text("Leadership"),
-          numeric: false,
-          onSort: sortStudents,
-        ),
-        DataColumn(
-          label: Text("Biology"),
-          numeric: false,
-          onSort: sortStudents,
-        ),
-        DataColumn(
-          label: Text("Chemistry"),
-          numeric: false,
-          onSort: sortStudents,
-        ),
-        DataColumn(
-          label: Text("Physics"),
-          numeric: false,
-          onSort: sortStudents,
+        DataTable(
+          sortAscending: sortedAscending,
+          sortColumnIndex: sortedColumnIndex,
+          columns: <DataColumn>[
+            DataColumn(
+              label: Text("Name"),
+              numeric: false,
+              onSort: sortStudents,
+            ),
+            DataColumn(
+              label: Text("Gender"),
+              numeric: false,
+              onSort: sortStudents,
+            ),
+            DataColumn(
+              label: Text("Leadership"),
+              numeric: false,
+              onSort: sortStudents,
+            ),
+            DataColumn(
+              label: Text("Biology"),
+              numeric: false,
+              onSort: sortStudents,
+            ),
+            DataColumn(
+              label: Text("Chemistry"),
+              numeric: false,
+              onSort: sortStudents,
+            ),
+            DataColumn(
+              label: Text("Physics"),
+              numeric: false,
+              onSort: sortStudents,
+            ),
+          ],
+          rows: students
+              .map((student) => DataRow(
+                    selected: student.name == selectedName,
+                    cells: [
+                      DataCell(
+                        Text(student.name),
+                        onTap: () => setState(() {
+                              selectedName = student.name == selectedName
+                                  ? null
+                                  : student.name;
+                            }),
+                      ),
+                      DataCell(
+                        Text(student.profile.gender.toString().split('.').last),
+                        onTap: () => setState(() {
+                              student.profile.gender =
+                                  student.profile.gender == Gender.M
+                                      ? Gender.F
+                                      : Gender.M;
+                              edited = true;
+                            }),
+                      ),
+                      DataCell(
+                        Icon(student.profile.isStrongLeader
+                            ? Icons.check
+                            : null),
+                        onTap: () => setState(() {
+                              student.profile.isStrongLeader =
+                                  !student.profile.isStrongLeader;
+                              edited = true;
+                            }),
+                      ),
+                      DataCell(
+                        Text(student.profile.bioLevel != null
+                            ? student.profile.bioLevel
+                                .toString()
+                                .split('.')
+                                .last
+                            : ""),
+                        onTap: () => setState(() {
+                              student.profile.bioLevel =
+                                  student.profile.bioLevel == null
+                                      ? Level.SL
+                                      : student.profile.bioLevel == Level.SL
+                                          ? Level.HL
+                                          : null;
+                              edited = true;
+                            }),
+                      ),
+                      DataCell(
+                        Text(student.profile.chmLevel != null
+                            ? student.profile.chmLevel
+                                .toString()
+                                .split('.')
+                                .last
+                            : ""),
+                        onTap: () => setState(() {
+                              student.profile.chmLevel =
+                                  student.profile.chmLevel == null
+                                      ? Level.SL
+                                      : student.profile.chmLevel == Level.SL
+                                          ? Level.HL
+                                          : null;
+                              edited = true;
+                            }),
+                      ),
+                      DataCell(
+                        Text(student.profile.phyLevel != null
+                            ? student.profile.phyLevel
+                                .toString()
+                                .split('.')
+                                .last
+                            : ""),
+                        onTap: () => setState(() {
+                              student.profile.phyLevel =
+                                  student.profile.phyLevel == null
+                                      ? Level.SL
+                                      : student.profile.phyLevel == Level.SL
+                                          ? Level.HL
+                                          : null;
+                              edited = true;
+                            }),
+                      ),
+                    ],
+                  ))
+              .toList(),
         ),
       ],
-      rows: students
-          .map((student) => DataRow(
-                selected: student.name == selectedName,
-                cells: [
-                  DataCell(
-                    Text(student.name),
-                    onTap: () => setState(() {
-                          selectedName = student.name == selectedName
-                              ? null
-                              : student.name;
-                        }),
-                  ),
-                  DataCell(
-                    Text(student.profile.gender.toString().split('.').last),
-                    onTap: () => setState(() {
-                          student.profile.gender =
-                              student.profile.gender == Gender.M
-                                  ? Gender.F
-                                  : Gender.M;
-                        }),
-                  ),
-                  DataCell(
-                    Icon(student.profile.isStrongLeader ? Icons.check : null),
-                    onTap: () => setState(() {
-                          student.profile.isStrongLeader =
-                              !student.profile.isStrongLeader;
-                        }),
-                  ),
-                  DataCell(
-                    Text(student.profile.bioLevel != null
-                        ? student.profile.bioLevel.toString().split('.').last
-                        : ""),
-                    onTap: () => setState(() {
-                          student.profile.bioLevel =
-                              student.profile.bioLevel == null
-                                  ? Level.SL
-                                  : student.profile.bioLevel == Level.SL
-                                      ? Level.HL
-                                      : null;
-                        }),
-                  ),
-                  DataCell(
-                    Text(student.profile.chmLevel != null
-                        ? student.profile.chmLevel.toString().split('.').last
-                        : ""),
-                    onTap: () => setState(() {
-                          student.profile.chmLevel =
-                              student.profile.chmLevel == null
-                                  ? Level.SL
-                                  : student.profile.chmLevel == Level.SL
-                                      ? Level.HL
-                                      : null;
-                        }),
-                  ),
-                  DataCell(
-                    Text(student.profile.phyLevel != null
-                        ? student.profile.phyLevel.toString().split('.').last
-                        : ""),
-                    onTap: () => setState(() {
-                          student.profile.phyLevel =
-                              student.profile.phyLevel == null
-                                  ? Level.SL
-                                  : student.profile.phyLevel == Level.SL
-                                      ? Level.HL
-                                      : null;
-                        }),
-                  ),
-                ],
-              ))
-          .toList(),
     );
   }
 }

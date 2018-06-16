@@ -4,6 +4,8 @@ enum Gender { M, F }
 enum Level { SL, HL }
 enum Subject { BIO, CHM, PHY }
 
+typedef SingleArgCallback<T>(T arg);
+
 /// The profile of a student, containing information about one's
 /// gender, subject (biology, chemistry, physics) levels (SL / HL),
 /// and leadership skills.
@@ -177,7 +179,7 @@ class GroupStats {
 class Promo {
   final List<Student> students;
 
-  Promo({@required this.students});
+  Promo(this.students);
 
   Promo.fromCSV(String csv) : students = [] {
     int nameIndex, genderIndex, leadershipIndex, bioIndex, chmIndex, phyIndex;
@@ -284,11 +286,6 @@ class Promo {
     }
     return csvRows.join("\n");
   }
-}
 
-Student findFrom(List<Student> promo, String name) {
-  for (Student student in promo) {
-    if (student.name == name) return student;
-  }
-  throw Exception;
+  /*Student find*/
 }
