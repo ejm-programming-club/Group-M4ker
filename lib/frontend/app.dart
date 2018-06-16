@@ -137,6 +137,7 @@ class _GrouperState extends State<Grouper> {
 
   void exclude(Subject subject) {
     setState(() {
+      excludedSubject = subject;
       Promo newPromo = Promo(
         promo.students.where((student) => !student.takes(subject)).toList(),
       );
@@ -183,7 +184,15 @@ class _GrouperState extends State<Grouper> {
     String path = directory.path;
     List<String> saves;
     final file = File("$path/$filename");
-    await file.writeAsString(grouping.toString());
+    // TODO handle exclusion
+    await file.writeAsString(
+      '''{"excluded": "${excludedSubject
+          .toString()
+          .split(".")
+          .last}", 
+  "groups": ${grouping.toString()}
+}''',
+    );
 
     final savesFile = File("$path/saved.json");
     try {
@@ -201,14 +210,22 @@ class _GrouperState extends State<Grouper> {
     final directory = await getApplicationDocumentsDirectory();
     String path = directory.path;
     final file = File("$path/$filename");
-    final List<List<String>> groups =
-        (jsonDecode(await file.readAsString()) as List)
-            .map((ls) => (ls as List).cast<String>())
-            .toList();
+    String jsonString = await file.readAsString();
+    Map<String, dynamic> jsonInfo = jsonDecode(jsonString);
+
+    excludedSubject = {
+      "BIO": Subject.BIO,
+      "CHM": Subject.CHM,
+      "PHY": Subject.PHY,
+    }[jsonInfo["excluded"]];
 
     setState(() {
       loadedFilename = filename;
-      /*grouping = fromList(_promoUnmodified, groups);*/
+
+      grouping =
+          Grouping.fromList(listOfGroups: jsonInfo["groups"], promo: promo);
+      exclude(excludedSubject);
+      groupCount = grouping.groups.length;
       issues = evaluator.findIssues(grouping);
     });
   }
@@ -283,9 +300,9 @@ class _GrouperState extends State<Grouper> {
               title: Text("Number of groups"),
               subtitle: Slider(
                 value: groupCount.toDouble(),
-                min: 8.0,
+                min: 2.0,
                 max: 10.0,
-                divisions: 2,
+                divisions: 8,
                 onChanged: (double value) {
                   setState(() {
                     groupCount = value.toInt();

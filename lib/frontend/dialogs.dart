@@ -175,7 +175,7 @@ class _SaveDialogState extends State<SaveDialog> {
           ),
           onPressed: validate(filename)
               ? () {
-                  widget.onConfirm(filename);
+                  widget.onConfirm(filename + ".json");
                   Navigator.of(context).pop();
                 }
               : null,

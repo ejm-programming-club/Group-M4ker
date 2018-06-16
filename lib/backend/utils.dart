@@ -83,6 +83,19 @@ class Grouping {
 
   Grouping(this.groups);
 
+  Grouping.fromList({@required dynamic listOfGroups, @required Promo promo})
+      : groups = [] {
+    for (List<dynamic> group in listOfGroups) {
+      List<Student> currentGroup = [];
+      for (dynamic studentName in group) {
+        Student student = promo.findByName(studentName as String);
+        if (student == null) throw Exception;
+        currentGroup.add(student);
+      }
+      groups.add(currentGroup);
+    }
+  }
+
   void swap(StudentPos pos1, StudentPos pos2) {
     Student temp = groups[pos1.groupInd][pos1.memberInd];
     groups[pos1.groupInd][pos1.memberInd] =
@@ -295,5 +308,12 @@ class Promo {
     return csvRows.join("\n");
   }
 
-/*Student find*/
+  Student findByName(String name) {
+    for (Student student in students) {
+      if (student.name == name) {
+        return student;
+      }
+    }
+    return null;
+  }
 }
