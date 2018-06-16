@@ -14,7 +14,7 @@ class MeanEvaluator implements Evaluator {
     for (List<Student> group in grouping.groups) {
       var groupErrors = <String>[];
       var groupStats = GroupStats.of(group);
-      var sizeCoeff = group.length / promo.students.length;
+      var sizeCoeff = 1 / grouping.groups.length;
 
       double idealMaleCount = promoStats.maleCount * sizeCoeff;
       double idealFemaleCount = promoStats.femaleCount * sizeCoeff;
