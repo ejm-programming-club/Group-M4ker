@@ -118,7 +118,9 @@ class _PromoEditorState extends State<PromoEditor> {
                         }),
                   ),
                   DataCell(
-                    Text(student.profile.bioLevel.toString().split('.').last),
+                    Text(student.profile.bioLevel != null
+                        ? student.profile.bioLevel.toString().split('.').last
+                        : ""),
                     onTap: () => setState(() {
                           student.profile.bioLevel =
                               student.profile.bioLevel == null
@@ -129,7 +131,9 @@ class _PromoEditorState extends State<PromoEditor> {
                         }),
                   ),
                   DataCell(
-                    Text(student.profile.chmLevel.toString().split('.').last),
+                    Text(student.profile.chmLevel != null
+                        ? student.profile.chmLevel.toString().split('.').last
+                        : ""),
                     onTap: () => setState(() {
                           student.profile.chmLevel =
                               student.profile.chmLevel == null
@@ -140,7 +144,9 @@ class _PromoEditorState extends State<PromoEditor> {
                         }),
                   ),
                   DataCell(
-                    Text(student.profile.phyLevel.toString().split('.').last),
+                    Text(student.profile.phyLevel != null
+                        ? student.profile.phyLevel.toString().split('.').last
+                        : ""),
                     onTap: () => setState(() {
                           student.profile.phyLevel =
                               student.profile.phyLevel == null
