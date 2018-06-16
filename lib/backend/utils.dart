@@ -4,8 +4,6 @@ enum Gender { M, F }
 enum Level { SL, HL }
 enum Subject { BIO, CHM, PHY }
 
-typedef SingleArgCallback<T>(T arg);
-
 /// The profile of a student, containing information about one's
 /// gender, subject (biology, chemistry, physics) levels (SL / HL),
 /// and leadership skills.

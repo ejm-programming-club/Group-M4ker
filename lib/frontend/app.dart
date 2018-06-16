@@ -151,8 +151,9 @@ class _GrouperState extends State<Grouper> {
     String path = directory.path;
     List<String> saves;
 
+    Directory("$path/state").createSync();
+    final file = File("$path/state/saved.json");
     try {
-      final file = File("$path/saved.json");
       saves = (jsonDecode(await file.readAsString()) as List)
           .cast<String>()
           .toList();
@@ -166,6 +167,11 @@ class _GrouperState extends State<Grouper> {
               context: context,
               filenames: saves,
               onConfirm: readFrom,
+              onDelete: (String deletedFileName) {
+                saves.remove(deletedFileName);
+                File("$path/$deletedFileName").delete();
+                file.writeAsString(jsonEncode(saves));
+              },
             ));
   }
 
@@ -194,7 +200,8 @@ class _GrouperState extends State<Grouper> {
 }''',
     );
 
-    final savesFile = File("$path/saved.json");
+    Directory("$path/state").createSync();
+    final savesFile = File("$path/state/saved.json");
     try {
       saves = (jsonDecode(await savesFile.readAsString()) as List)
           .cast<String>()
@@ -377,6 +384,10 @@ class _GrouperState extends State<Grouper> {
                                       promo = newPromo;
                                       savePromo();
                                       exclude(excludedSubject);
+
+                                      grouping = Grouping([]);
+                                      selectedPositions = [];
+                                      issues = [];
                                     });
                                   },
                                 ),
@@ -439,7 +450,7 @@ class _GrouperState extends State<Grouper> {
     final dir = await getApplicationDocumentsDirectory();
     try {
       String promo2019CSV =
-          await File("${dir.path}/promo/promo.csv").readAsString();
+          await File("${dir.path}/state/promo.csv").readAsString();
       setState(() {
         promo = Promo.fromCSV(promo2019CSV);
       });
@@ -452,8 +463,8 @@ class _GrouperState extends State<Grouper> {
   /// save promo / class to csv.
   void savePromo() async {
     final dir = await getApplicationDocumentsDirectory();
-    Directory("${dir.path}/promo").createSync();
-    final file = File("${dir.path}/promo/promo.csv");
+    Directory("${dir.path}/state").createSync();
+    final file = File("${dir.path}/state/promo.csv");
     file.writeAsString(promo.toCSV());
     print("Saved.");
   }

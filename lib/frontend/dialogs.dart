@@ -61,9 +61,15 @@ class LoadDialog extends StatefulWidget {
   final List<String> filenames;
   final BuildContext context;
   final ArgCallback<String> onConfirm;
+  final ArgCallback<String> onDelete;
 
-  const LoadDialog({Key key, this.filenames, this.context, this.onConfirm})
-      : super(key: key);
+  const LoadDialog({
+    Key key,
+    this.filenames,
+    this.context,
+    this.onConfirm,
+    this.onDelete,
+  }) : super(key: key);
 
   @override
   State<LoadDialog> createState() => _LoadDialogState();
@@ -110,6 +116,45 @@ class _LoadDialogState extends State<LoadDialog> {
               ? () {
                   widget.onConfirm(filename);
                   Navigator.of(context).pop();
+                }
+              : null,
+        ),
+        FlatButton(
+          child: Text(
+            "Delete",
+          ),
+          textColor: Colors.red,
+          onPressed: filename != null
+              ? () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Confirm deletion"),
+                          content: Text("This action can not be undone."),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text("Cancel"),
+                              textColor: Colors.blue,
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            FlatButton(
+                              child: Text("Delete"),
+                              textColor: Colors.red,
+                              onPressed: () {
+                                widget.onDelete(filename);
+                                setState(() {
+                                  widget.filenames.remove(filename);
+                                  filename = null;
+                                });
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      });
                 }
               : null,
         ),
@@ -175,7 +220,7 @@ class _SaveDialogState extends State<SaveDialog> {
           ),
           onPressed: validate(filename)
               ? () {
-                  widget.onConfirm(filename + ".json");
+                  widget.onConfirm(filename);
                   Navigator.of(context).pop();
                 }
               : null,

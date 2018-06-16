@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:group_m4ker/backend/utils.dart';
+import 'package:group_m4ker/frontend/dialogs.dart';
 
 class PromoEditor extends StatefulWidget {
   final Promo promo;
-  final SingleArgCallback<Promo> onSave;
+  final ArgCallback<Promo> onSave;
 
   const PromoEditor({Key key, this.promo, this.onSave}) : super(key: key);
 
