@@ -419,7 +419,10 @@ class _GrouperState extends State<Grouper> {
     final dir = await getApplicationDocumentsDirectory();
     try {
       String promo2019CSV = await File("${dir.path}/promo.csv").readAsString();
-      promo = promoFromCsv(promo2019CSV);
-    } catch (e) {}
+      promo = Promo.fromCSV(promo2019CSV);
+//      File("${dir.path}/promo.csv").writeAsString(promo.toCSV());
+    } catch (e) {
+      print("Failed to load");
+    }
   }
 }

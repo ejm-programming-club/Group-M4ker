@@ -178,39 +178,112 @@ class Promo {
   final List<Student> students;
 
   Promo({@required this.students});
-}
 
-bool isNull(String s) => s.length == 0 || s == "NA";
-
-Promo promoFromCsv(String csv) {
-  List<Student> students = <Student>[];
-
-  for (String row in csv.split('\n').sublist(1)) {
-    // Student,M/F,BIO Level,BIO Group,CHM Level,PHY Level,email[,leadership]
-    List<String> fields = row.split(',');
-    Level bioLevel, chmLevel, phyLevel;
-
-    if (!isNull(fields[2])) {
-      bioLevel = fields[2] == "SL" ? Level.SL : Level.HL;
-    } else {
-      phyLevel = fields[5] == "SL" ? Level.SL : Level.HL;
+  Promo.fromCSV(String csv) : students = [] {
+    int nameIndex, genderIndex, leadershipIndex, bioIndex, chmIndex, phyIndex;
+    List<String> rows = csv.split("\n");
+    if (rows.length <= 1) throw Exception;
+    String headers = rows[0];
+    for (final e in headers.split(",").asMap().entries) {
+      String header = e.value.toUpperCase().replaceAll(" ", "");
+      if (nameIndex == null &&
+          (header.contains("NAME") || header.contains("STUDENT"))) {
+        nameIndex = e.key;
+        continue;
+      }
+      if (genderIndex == null &&
+          (header.contains("GENDER") ||
+              header.contains("M/F") ||
+              header.contains("SEX"))) {
+        genderIndex = e.key;
+        continue;
+      }
+      if (leadershipIndex == null && header.contains("LEADER")) {
+        leadershipIndex = e.key;
+        continue;
+      }
+      if (bioIndex == null && header.contains("BIO")) {
+        bioIndex = e.key;
+        continue;
+      }
+      if (chmIndex == null && header.contains("CHM")) {
+        chmIndex = e.key;
+        continue;
+      }
+      if (phyIndex == null && header.contains("PHY")) {
+        phyIndex = e.key;
+        continue;
+      }
     }
 
-    if (!isNull(fields[4])) {
-      chmLevel = fields[4] == "SL" ? Level.SL : Level.HL;
-    }
-
-    students.add(Student(
-        name: fields[0],
+    List<String> studentRows = rows.sublist(1);
+    for (String studentRow in studentRows) {
+      List<String> studentInfo = studentRow.split(",");
+      students.add(Student(
+        name: nameIndex != null ? studentInfo[nameIndex] : "",
         profile: Profile(
-          gender: fields[1] == "M" ? Gender.M : Gender.F,
-          bioLevel: bioLevel,
-          chmLevel: chmLevel,
-          phyLevel: phyLevel,
-          isStrongLeader: false,
-        )));
+          gender: genderIndex != null
+              ? (studentInfo[genderIndex].toUpperCase() == "M"
+                  ? Gender.M
+                  : studentInfo[genderIndex].toUpperCase() == "F"
+                      ? Gender.F
+                      : null)
+              : null,
+          isStrongLeader: leadershipIndex != null
+              ? studentInfo[leadershipIndex].isNotEmpty
+              : false,
+          bioLevel: bioIndex != null
+              ? studentInfo[bioIndex].toUpperCase() == "SL"
+                  ? Level.HL
+                  : studentInfo[bioIndex].toUpperCase() == "HL"
+                      ? Level.HL
+                      : null
+              : null,
+          chmLevel: bioIndex != null
+              ? studentInfo[chmIndex].toUpperCase() == "SL"
+                  ? Level.HL
+                  : studentInfo[chmIndex].toUpperCase() == "HL"
+                      ? Level.HL
+                      : null
+              : null,
+          phyLevel: bioIndex != null
+              ? studentInfo[phyIndex].toUpperCase() == "SL"
+                  ? Level.HL
+                  : studentInfo[phyIndex].toUpperCase() == "HL"
+                      ? Level.HL
+                      : null
+              : null,
+        ),
+      ));
+    }
   }
-  return Promo(students: students);
+
+  String toCSV() {
+    List<String> csvRows = [];
+
+    // Header
+    csvRows.add([
+      "Name",
+      "Gender",
+      "Leadereship",
+      "Bio level",
+      "Chm level",
+      "Phy level",
+    ].join(","));
+
+    // Students
+    for (Student student in students) {
+      csvRows.add([
+        student.name,
+        student.profile.gender.toString().split(".").last,
+        student.profile.isStrongLeader ? "Yes" : "",
+        (student.profile.bioLevel ?? "").toString().split(".").last,
+        (student.profile.chmLevel ?? "").toString().split(".").last,
+        (student.profile.phyLevel ?? "").toString().split(".").last,
+      ].join(","));
+    }
+    return csvRows.join("\n");
+  }
 }
 
 Student findFrom(List<Student> promo, String name) {
