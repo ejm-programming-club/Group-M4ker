@@ -8,49 +8,36 @@ enum Subject { BIO, CHM, PHY }
 /// gender, subject (biology, chemistry, physics) levels (SL / HL),
 /// and leadership skills.
 class Profile {
-  final Gender gender;
-  final Level bioLevel, chmLevel, phyLevel;
-  final bool isStrongLeader;
+  Gender gender;
+  Level bioLevel, chmLevel, phyLevel;
+  bool isStrongLeader;
 
-  static final Map<int, Profile> _cache = {};
-
-  Profile._internal({
-    this.gender,
-    this.bioLevel,
-    this.chmLevel,
-    this.phyLevel,
-    this.isStrongLeader = false,
+  Profile({
+    @required this.gender,
+    @required this.bioLevel,
+    @required this.chmLevel,
+    @required this.phyLevel,
+    @required this.isStrongLeader,
   });
 
-  factory Profile({
-    Gender gender,
-    Level bioLevel,
-    Level chmLevel,
-    Level phyLevel,
-    bool isStrongLeader = false,
-  }) {
-    int hashCode = identityHashCode(gender) +
-        31 * identityHashCode(bioLevel) +
-        31 * 31 * identityHashCode(chmLevel) +
-        31 * 31 * 31 * identityHashCode(phyLevel) +
-        31 * 31 * 31 * 31 * identityHashCode(isStrongLeader);
-    if (_cache.containsKey(hashCode)) return _cache[hashCode];
-    Profile profile = Profile._internal(
-      gender: gender,
-      bioLevel: bioLevel,
-      chmLevel: chmLevel,
-      phyLevel: phyLevel,
-      isStrongLeader: isStrongLeader,
-    );
-    _cache[hashCode] = profile;
-    return profile;
+  @override
+  bool operator ==(other) {
+    return other is Profile &&
+        gender == other.gender &&
+        bioLevel == other.bioLevel &&
+        chmLevel == other.chmLevel &&
+        phyLevel == other.phyLevel &&
+        isStrongLeader == other.isStrongLeader;
   }
+
+  @override
+  int get hashCode => super.hashCode;
 }
 
 /// A student defined by his/her name and [Profile].
 class Student {
-  final Profile profile;
-  final String name;
+  Profile profile;
+  String name;
 
   Student({this.profile, this.name});
 
@@ -199,7 +186,7 @@ Promo promoFromCsv(String csv) {
   List<Student> students = <Student>[];
 
   for (String row in csv.split('\n').sublist(1)) {
-    // Student,M/F,BIO Level,BIO Group,CHM Level,PHY Level,email
+    // Student,M/F,BIO Level,BIO Group,CHM Level,PHY Level,email[,leadership]
     List<String> fields = row.split(',');
     Level bioLevel, chmLevel, phyLevel;
 
@@ -220,7 +207,7 @@ Promo promoFromCsv(String csv) {
           bioLevel: bioLevel,
           chmLevel: chmLevel,
           phyLevel: phyLevel,
-          isStrongLeader: false, // TODO
+          isStrongLeader: false,
         )));
   }
   return Promo(students: students);
@@ -232,9 +219,3 @@ Student findFrom(List<Student> promo, String name) {
   }
   throw Exception;
 }
-
-Grouping fromList(List<Student> promo, List<List<String>> groups) => Grouping(
-    groups
-        .map((List<String> group) =>
-        group.map((String name) => findFrom(promo, name)).toList())
-        .toList());

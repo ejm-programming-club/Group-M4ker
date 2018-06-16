@@ -3,11 +3,12 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:group_m4ker/frontend/drive.dart';
 import 'package:group_m4ker/backend/evaluator.dart';
 import 'package:group_m4ker/backend/generator.dart';
 import 'package:group_m4ker/backend/utils.dart';
 import 'package:group_m4ker/frontend/dialogs.dart';
+import 'package:group_m4ker/frontend/drive.dart';
+import 'package:group_m4ker/frontend/editor.dart';
 import 'package:group_m4ker/frontend/group.dart';
 import 'package:group_m4ker/frontend/profile.dart';
 import 'package:path_provider/path_provider.dart';
@@ -36,9 +37,11 @@ class _GrouperState extends State<Grouper> {
   Promo get promo => _promo;
 
   set promo(Promo promo) {
-    _promo = promo;
-    evaluator = MeanEvaluator(promo);
-    generator = MinJealousyGenerator(promo);
+    setState(() {
+      _promo = promo;
+      evaluator = MeanEvaluator(promo);
+      generator = MinJealousyGenerator(promo);
+    });
   }
 
   _GrouperState() {
@@ -135,7 +138,6 @@ class _GrouperState extends State<Grouper> {
   void exclude(Subject subject) {
     setState(() {
       Promo newPromo = Promo(
-        name: "${promo.name} without $subject",
         students:
             promo.students.where((student) => !student.takes(subject)).toList(),
       );
@@ -332,9 +334,39 @@ class _GrouperState extends State<Grouper> {
             ),
             Divider(),
             ListTile(
-                title: Text("Load data from Drive"),
+                title: Text("Load class from Drive"),
                 leading: Icon(Icons.sync),
-                onTap: () => driveSignIn(context)),
+                onTap: () {
+                  driveSignIn(context);
+                  loadPromoFromSavedCSV();
+                }),
+            Divider(),
+            ListTile(
+              title: Text("View / Edit class"),
+              leading: Icon(Icons.group),
+              onTap: promo != null
+                  ? () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                              title: Text("Class"),
+                              content: SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.8,
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                child: ListView(
+                                  children: <Widget>[
+                                    PromoEditor(
+                                      promo: promo,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                      );
+                    }
+                  : null,
+            ),
           ],
         ),
       ),
@@ -367,14 +399,16 @@ class _GrouperState extends State<Grouper> {
         ),
         IconButton(
           icon: Icon(Icons.refresh),
-          onPressed: () => showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (BuildContext context) => RedistributeGroupsDialog(
-                      generateGroups: generateGroups,
-                      context: context,
-                    ),
-              ),
+          onPressed: generator != null && evaluator != null
+              ? () => showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) => RedistributeGroupsDialog(
+                          generateGroups: generateGroups,
+                          context: context,
+                        ),
+                  )
+              : null,
           tooltip: "Redistribute groups",
         ),
       ],
@@ -383,7 +417,9 @@ class _GrouperState extends State<Grouper> {
 
   void loadPromoFromSavedCSV() async {
     final dir = await getApplicationDocumentsDirectory();
-    String promo2019CSV = await File("${dir.path}/promo.csv").readAsString();
-    promo = promoFromCsv(promo2019CSV);
+    try {
+      String promo2019CSV = await File("${dir.path}/promo.csv").readAsString();
+      promo = promoFromCsv(promo2019CSV);
+    } catch (e) {}
   }
 }
