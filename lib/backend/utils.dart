@@ -52,6 +52,14 @@ class Student {
         }[subject] !=
         null;
   }
+
+  @override
+  bool operator ==(other) {
+    return other is Student && other.name == name && other.profile == profile;
+  }
+
+  @override
+  int get hashCode => super.hashCode;
 }
 
 class StudentPos {
@@ -287,5 +295,5 @@ class Promo {
     return csvRows.join("\n");
   }
 
-  /*Student find*/
+/*Student find*/
 }

@@ -14,14 +14,10 @@ class PromoEditor extends StatefulWidget {
 }
 
 class _PromoEditorState extends State<PromoEditor> {
-  // TODO save promo
-  // TODO allow deletion of student
-  // TODO allow addition of student
-  // TODO allow edition  of student's name (on Selected)
   List<Student> students;
   int sortedColumnIndex = 0;
   bool sortedAscending = true;
-  String selectedName;
+  Student selectedStudent;
   bool edited = false;
 
   _PromoEditorState(this.students);
@@ -30,7 +26,7 @@ class _PromoEditorState extends State<PromoEditor> {
     Comparable property(Student student) {
       return {
         0: student.name,
-        1: student.profile.gender.index,
+        1: student.profile.gender?.index ?? -1,
         2: student.profile.isStrongLeader ? 1 : 0,
         3: student.profile.bioLevel?.index ?? -1,
         4: student.profile.chmLevel?.index ?? -1,
@@ -60,6 +56,63 @@ class _PromoEditorState extends State<PromoEditor> {
       children: <Widget>[
         ButtonBar(
           children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.indeterminate_check_box),
+              onPressed: selectedStudent == null
+                  ? null
+                  : () => setState(() {
+                        students.remove(selectedStudent);
+                        edited = true;
+                        selectedStudent = null;
+                      }),
+            ),
+            IconButton(
+              icon: Icon(Icons.add_box),
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      final controller = TextEditingController();
+                      return AlertDialog(
+                        title: Text("Name of student"),
+                        content: TextField(
+                          controller: controller,
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("Cancel"),
+                            textColor: Colors.grey,
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                          FlatButton(
+                            child: Text("Add"),
+                            textColor: Colors.blue,
+                            onPressed: () {
+                              setState(() {
+                                final newStudent = Student(
+                                  name: controller.text,
+                                  profile: Profile(
+                                    isStrongLeader: false,
+                                    gender: null,
+                                    bioLevel: null,
+                                    chmLevel: null,
+                                    phyLevel: null,
+                                  ),
+                                );
+                                edited = true;
+                                sortedColumnIndex = null;
+                                selectedStudent = newStudent;
+                                students.insert(0, newStudent);
+                              });
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    });
+              },
+            ),
             FlatButton(
               child: Text("Cancel"),
               textColor: Colors.grey,
@@ -116,14 +169,13 @@ class _PromoEditorState extends State<PromoEditor> {
           ],
           rows: students
               .map((student) => DataRow(
-                    selected: student.name == selectedName,
+                    selected: student == selectedStudent,
                     cells: [
                       DataCell(
                         Text(student.name),
                         onTap: () => setState(() {
-                              selectedName = student.name == selectedName
-                                  ? null
-                                  : student.name;
+                              selectedStudent =
+                                  student == selectedStudent ? null : student;
                             }),
                       ),
                       DataCell(

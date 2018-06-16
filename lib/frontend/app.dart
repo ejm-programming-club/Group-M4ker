@@ -336,8 +336,7 @@ class _GrouperState extends State<Grouper> {
                 title: Text("Load class from Drive"),
                 leading: Icon(Icons.sync),
                 onTap: () {
-                  driveSignIn(context);
-                  loadPromo();
+                  driveSignIn(context, loadPromo);
                 }),
             Divider(),
             ListTile(
@@ -422,17 +421,23 @@ class _GrouperState extends State<Grouper> {
   void loadPromo() async {
     final dir = await getApplicationDocumentsDirectory();
     try {
-      String promo2019CSV = await File("${dir.path}/promo.csv").readAsString();
-      promo = Promo.fromCSV(promo2019CSV);
+      String promo2019CSV =
+          await File("${dir.path}/promo/promo.csv").readAsString();
+      setState(() {
+        promo = Promo.fromCSV(promo2019CSV);
+      });
+      print("Loaded from saved.");
     } catch (e) {
-      print("Failed to load");
+      print("Failed to load.");
     }
   }
 
   /// save promo / class to csv.
   void savePromo() async {
     final dir = await getApplicationDocumentsDirectory();
-    final file = File("${dir.path}/promo.csv");
+    Directory("${dir.path}/promo").createSync();
+    final file = File("${dir.path}/promo/promo.csv");
     file.writeAsString(promo.toCSV());
+    print("Saved.");
   }
 }
