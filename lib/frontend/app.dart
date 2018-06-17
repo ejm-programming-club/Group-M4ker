@@ -304,15 +304,33 @@ class _GrouperState extends State<Grouper> {
       TextStyle headerStyle = TextStyle(fontSize: 32.0);
       TextStyle contentStyle = TextStyle(fontSize: 24.0);
       List<Widget> information = [];
+
+      const ICON_PADDING = 8.0;
+
+      var iconGenerator = (Icon icon) =>
+          new Padding(padding: const EdgeInsets.all(ICON_PADDING), child: icon);
+
+      final warningIcon = iconGenerator(Icon(
+        Icons.warning,
+        color: Colors.red,
+      ));
+
+      final allGoodIcon = iconGenerator(Icon(
+        Icons.check_box,
+        color: Colors.green,
+      ));
+
+      final infoIcon = iconGenerator(Icon(
+        Icons.info,
+        color: Colors.blue,
+      ));
+
       if (promo == null) {
         information.add(Row(
           children: <Widget>[
-            Icon(
-              Icons.warning,
-              color: Colors.red,
-            ),
+            warningIcon,
             Text(
-              "No class information loaded.",
+              "No class information loaded",
               style: headerStyle,
             ),
           ],
@@ -320,12 +338,9 @@ class _GrouperState extends State<Grouper> {
       } else {
         information.add(Row(
           children: <Widget>[
-            Icon(
-              Icons.check_box,
-              color: Colors.green,
-            ),
+            allGoodIcon,
             Text(
-              "Class information is loaded.",
+              "Class information is loaded",
               style: headerStyle,
             )
           ],
@@ -334,8 +349,11 @@ class _GrouperState extends State<Grouper> {
       information.add(Row(
         children: <Widget>[
           Text("Go to ", style: contentStyle),
+          SizedBox(width: 5.0),
           Icon(Icons.menu),
+          SizedBox(width: 5.0),
           Text(" at the top left to:", style: contentStyle),
+          new Divider(height: 2.0),
         ],
       ));
       information.add(Row(children: <Widget>[
@@ -345,20 +363,25 @@ class _GrouperState extends State<Grouper> {
             Row(
               children: <Widget>[
                 Icon(Icons.sync),
-                Text("load class information from google spreadsheet;",
+                SizedBox(width: 5.0),
+                Text("Load class information from google spreadsheet",
                     style: contentStyle)
               ],
             ),
+            new Divider(height: 2.0),
             Row(
               children: <Widget>[
                 Icon(Icons.group),
-                Text("View / edit class information;", style: contentStyle)
+                SizedBox(width: 5.0),
+                Text("View / edit class information", style: contentStyle)
               ],
             ),
+            new Divider(height: 2.0),
             Row(
               children: <Widget>[
                 Icon(Icons.settings),
-                Text("Tweak grouping parameters (number of groups);",
+                SizedBox(width: 5.0),
+                Text("Tweak grouping parameters (number of groups)",
                     style: contentStyle)
               ],
             ),
@@ -368,12 +391,9 @@ class _GrouperState extends State<Grouper> {
       information.add(Divider());
       information.add(Row(
         children: <Widget>[
-          Icon(
-            Icons.warning,
-            color: Colors.red,
-          ),
+          warningIcon,
           Text(
-            "No grouping loaded.",
+            "No grouping loaded",
             style: headerStyle,
           ),
         ],
@@ -386,44 +406,52 @@ class _GrouperState extends State<Grouper> {
               "Go to button bar at the bottom to:",
               style: contentStyle,
             ),
+            new Divider(height: 2.0),
             Row(
               children: <Widget>[
                 Icon(Icons.refresh),
-                Text("Generate new groups;", style: contentStyle),
+                SizedBox(width: 5.0),
+                Text("Generate new groups", style: contentStyle),
               ],
             ),
+            new Divider(height: 2.0),
             Row(
               children: <Widget>[
                 Icon(Icons.file_upload),
-                Text("Load saved grouping;", style: contentStyle)
+                SizedBox(width: 5.0),
+                Text("Load saved grouping", style: contentStyle)
               ],
             ),
+            new Divider(height: 2.0),
             Row(
               children: <Widget>[
                 Icon(Icons.file_download),
-                Text("Save current grouping;", style: contentStyle)
+                SizedBox(width: 5.0),
+                Text("Save current grouping", style: contentStyle)
               ],
             ),
+            new Divider(height: 2.0),
             Row(
               children: <Widget>[
                 Icon(Icons.swap_horiz),
+                SizedBox(width: 5.0),
                 Icon(Icons.undo),
+                SizedBox(width: 5.0),
                 Icon(Icons.redo),
-                Text("Do, undo, and redo student swapping;",
+                SizedBox(width: 5.0),
+                Text("Do, undo, and redo student swapping",
                     style: contentStyle)
               ],
             ),
           ],
         ),
       ]));
+      information.add(Divider());
       information.add(Row(
         children: <Widget>[
-          Icon(
-            Icons.info,
-            color: Colors.blue,
-          ),
+          infoIcon,
           Text(
-            "Use the top bar to filter students.",
+            "Use the top bar to filter students",
             style: headerStyle,
           ),
         ],

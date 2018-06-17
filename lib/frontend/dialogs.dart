@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 typedef void ArgCallback<T>(T arg);
@@ -229,3 +231,19 @@ class _SaveDialogState extends State<SaveDialog> {
     );
   }
 }
+
+Future<Null> infoDialog(String text, BuildContext context) async {
+  return showDialog<Null>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return new AlertDialog(
+        content: new Text(text),
+        actions: <Widget>[
+          new FlatButton(onPressed: () => Navigator.of(context).pop(), child: new Text("OK"))
+        ],
+      );
+    },
+  );
+}
+
