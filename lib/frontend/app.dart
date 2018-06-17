@@ -808,17 +808,30 @@ class _GrouperState extends State<Grouper> {
   }
 
   /// load promo / class from saved csv.
-  void loadPromo() async {
+  void loadPromo([ArgCallback<List<String>> reportIssues]) async {
     final dir = await getApplicationDocumentsDirectory();
     try {
       String promo2019CSV =
           await File("${dir.path}/state/promo.csv").readAsString();
       setState(() {
-        promo = Promo.fromCSV(promo2019CSV);
+        promo = Promo.fromCSV(
+          promo2019CSV,
+          reportColumns: reportIssues == null
+              ? null
+              : (List<String> issues) =>
+                  reportIssues(["Successfully loaded class.", "", ""] + issues),
+        );
       });
-      print("Loaded from saved.");
     } catch (e) {
-      print("Failed to load.");
+      if (reportIssues != null)
+        reportIssues([
+          "Failed to load class.",
+          "This is most likely because the file is empty.",
+          "Refer to the error message below:",
+          "",
+          "",
+          e.toString(),
+        ]);
     }
   }
 

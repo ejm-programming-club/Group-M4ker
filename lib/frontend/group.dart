@@ -68,7 +68,10 @@ class GroupBox extends StatelessWidget {
                       .map((MapEntry<int, Student> member) {
                     List<String> name = member.value.name.split(' ');
                     var firstName = name.last;
-                    var abbreviatedLastName = name.first[0] + '.';
+                    var abbreviatedLastName =
+                        name.first.isEmpty || name.length < 2
+                            ? ''
+                            : name.first[0] + '.';
                     return StudentEntry(
                       studentName: "$firstName $abbreviatedLastName",
                       isSelected: selectedPositions

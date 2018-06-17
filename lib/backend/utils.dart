@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:group_m4ker/frontend/dialogs.dart';
 
 enum Gender { M, F }
 enum Level { SL, HL }
@@ -213,12 +214,13 @@ class Promo {
 
   Promo(this.students);
 
-  Promo.fromCSV(String csv) : students = [] {
+  Promo.fromCSV(String csv, {ArgCallback<List<String>> reportColumns})
+      : students = [] {
     int nameIndex, genderIndex, leadershipIndex, bioIndex, chmIndex, phyIndex;
     List<String> rows = csv.split("\n");
     if (rows.length <= 1) throw Exception;
-    String headers = rows[0];
-    for (final e in headers.split(",").asMap().entries) {
+    List<String> headers = rows[0].split(",");
+    for (final e in headers.asMap().entries) {
       String header = e.value.toUpperCase().replaceAll(" ", "");
       if (nameIndex == null &&
           (header.contains("NAME") || header.contains("STUDENT"))) {
@@ -289,6 +291,22 @@ class Promo {
               : null,
         ),
       ));
+
+      if (reportColumns != null) {
+        reportColumns([
+          "Name: ${nameIndex == null ? 'MISSING' : headers[nameIndex]}",
+          "Gender: ${genderIndex == null ? 'MISSING' : headers[genderIndex]}",
+          "Leadership: ${leadershipIndex == null
+              ? 'MISSING'
+              : headers[leadershipIndex]}",
+          "Biology level: ${bioIndex == null ? 'MISSING' : headers[bioIndex]}",
+          "Chemistry level: ${chmIndex == null
+              ? 'MISSING'
+              : headers[chmIndex]}",
+          "Physics level: ${phyIndex == null ? 'MISSING' : headers[phyIndex]}",
+          "Missing information can be added at Menu (top left) > View / Edit class.",
+        ]);
+      }
     }
   }
 
