@@ -82,13 +82,12 @@ class _PromoEditorState extends State<PromoEditor> {
                         ),
                         actions: <Widget>[
                           FlatButton(
-                            child: Text("Cancel"),
-                            textColor: Colors.grey,
+                            child: Text("CANCEL"),
+                            textColor: Colors.red,
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                           FlatButton(
-                            child: Text("Add"),
-                            textColor: Colors.blue,
+                            child: Text("ADD"),
                             onPressed: () {
                               setState(() {
                                 final newStudent = Student(
@@ -115,14 +114,14 @@ class _PromoEditorState extends State<PromoEditor> {
               },
             ),
             FlatButton(
-              child: Text("Cancel"),
-              textColor: Colors.grey,
+              child: Text("CANCEL"),
+              textColor: Colors.red,
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             FlatButton(
-              child: Text("Update class"),
+              child: Text("UPDATE CLASS"),
               textColor: Colors.blue,
               onPressed: edited
                   ? () {

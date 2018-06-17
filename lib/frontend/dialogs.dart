@@ -31,9 +31,9 @@ class _RedistributeGroupsDialogState extends State<RedistributeGroupsDialog> {
       actions: <Widget>[
         FlatButton(
           child: Text(
-            "Cancel",
+            "CANCEL",
             style: TextStyle(
-              color: Colors.grey,
+              color: Colors.red,
             ),
           ),
           onPressed: loading
@@ -43,7 +43,7 @@ class _RedistributeGroupsDialogState extends State<RedistributeGroupsDialog> {
                 },
         ),
         FlatButton(
-          child: Text("Redistribute groups"),
+          child: Text("REDISTRIBUTE GROUPS"),
           onPressed: loading
               ? null
               : () {
@@ -103,7 +103,7 @@ class _LoadDialogState extends State<LoadDialog> {
       actions: <Widget>[
         FlatButton(
           child: Text(
-            "Cancel",
+            "CANCEL",
             style: TextStyle(
               color: Colors.grey,
             ),
@@ -112,7 +112,7 @@ class _LoadDialogState extends State<LoadDialog> {
         ),
         FlatButton(
           child: Text(
-            "OK",
+            "LOAD",
           ),
           onPressed: filename != null
               ? () {
@@ -123,7 +123,7 @@ class _LoadDialogState extends State<LoadDialog> {
         ),
         FlatButton(
           child: Text(
-            "Delete",
+            "DELETE",
           ),
           textColor: Colors.red,
           onPressed: filename != null
@@ -136,14 +136,13 @@ class _LoadDialogState extends State<LoadDialog> {
                           content: Text("This action can not be undone."),
                           actions: <Widget>[
                             FlatButton(
-                              child: Text("Cancel"),
-                              textColor: Colors.blue,
+                              child: Text("CANCEL"),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
                             ),
                             FlatButton(
-                              child: Text("Delete"),
+                              child: Text("DELETE"),
                               textColor: Colors.red,
                               onPressed: () {
                                 widget.onDelete(filename);
@@ -209,16 +208,14 @@ class _SaveDialogState extends State<SaveDialog> {
       actions: <Widget>[
         FlatButton(
           child: Text(
-            "Cancel",
-            style: TextStyle(
-              color: Colors.grey,
-            ),
+            "CANCEL",
           ),
+          textColor: Colors.red,
           onPressed: () => Navigator.of(context).pop(),
         ),
         FlatButton(
           child: Text(
-            "OK",
+            "SAVE",
           ),
           onPressed: validate(filename)
               ? () {

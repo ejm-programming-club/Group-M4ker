@@ -686,7 +686,7 @@ class _GrouperState extends State<Grouper> {
                 title: Text("Load class from Drive"),
                 leading: Icon(
                   Icons.sync,
-                  color: promo != null ? Colors.teal : null,
+                  color: promo == null ? Colors.teal : null,
                 ),
                 onTap: () {
                   driveSignIn(context, loadPromo);
