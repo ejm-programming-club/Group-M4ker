@@ -9,17 +9,18 @@
 # Group M4ker
 Group maker for IB's Group 4 field trips.
 
-<div align="inline-block">
-    <img src="README_assets/screenshots/launch_image.png">
-    <img src="README_assets/screenshots/home_page.png">
-</div>
-<div align="inline-block">
-    <img src="README_assets/screenshots/gdrive_import.png">
-    <img src="README_assets/screenshots/class_editor.png">
-</div>
-<div align="inline-block">
-    <img src="README_assets/screenshots/groups.png">
-    <img src="README_assets/icon.png" height="480" width="480">
+<div align="center">
+    <div align="inline-block">
+        <img width="420" height="315" src="README_assets/screenshots/launch_image.png">
+        <img width="420" height="315" src="README_assets/screenshots/home_page.png">
+    </div>
+    <div align="inline-block">
+        <img width="420" height="315" src="README_assets/screenshots/gdrive_import.png">
+        <img width="420" height="315" src="README_assets/screenshots/class_editor.png">
+    </div>
+    <div align="inline-block">
+        <img width="420" height="315" src="README_assets/screenshots/groups.png">
+    </div>
 </div>
 
 
@@ -71,5 +72,7 @@ females, SLs and physicists do not deviate from the mean values.
 
 ### Frontend
 - The global app state is managed within `Grouper`.
-- The rendering of the groups and students are implemented in `GroupBox` and `StudentEntry`.
--  
+- Rendering of the groups and students are implemented in `GroupBox` and `StudentEntry`.
+- `frontend/drive.dart` is responsible for the logic behind importing class information from Google Drive.
+- `frontend/editor.dart` is responsible for the logic behind the class information editor.
+- `frontend/dialogs` gathers myriad popups and confirmation dialogs.
