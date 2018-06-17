@@ -439,8 +439,7 @@ class _GrouperState extends State<Grouper> {
                 SizedBox(width: 5.0),
                 Icon(Icons.redo),
                 SizedBox(width: 5.0),
-                Text("Do, undo, and redo student swapping",
-                    style: contentStyle)
+                Text("Do, undo, and redo student swapping", style: contentStyle)
               ],
             ),
           ],
