@@ -453,6 +453,13 @@ class _GrouperState extends State<Grouper> {
                       onChanged: (String name) {
                         setState(() {
                           queryStudent.name = name;
+                          queryStudent.profile = Profile(
+                            isStrongLeader: false,
+                            gender: null,
+                            bioLevel: null,
+                            chmLevel: null,
+                            phyLevel: null,
+                          );
                           highlightedPositions = locateQuery();
                         });
                       },
