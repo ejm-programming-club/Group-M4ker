@@ -62,7 +62,6 @@ class GroupBox extends StatelessWidget {
               child: new Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
                 child: ListView(
-//                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: members
                       .asMap()
                       .entries

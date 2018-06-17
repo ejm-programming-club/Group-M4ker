@@ -300,6 +300,140 @@ class _GrouperState extends State<Grouper> {
         children: groupBoxes.sublist(i, min(i + 2, groupBoxes.length)),
       ));
     }
+    if (groupColumns.isEmpty) {
+      TextStyle headerStyle = TextStyle(fontSize: 32.0);
+      TextStyle contentStyle = TextStyle(fontSize: 24.0);
+      List<Widget> information = [];
+      if (promo == null) {
+        information.add(Row(
+          children: <Widget>[
+            Icon(
+              Icons.warning,
+              color: Colors.red,
+            ),
+            Text(
+              "No class information loaded.",
+              style: headerStyle,
+            ),
+          ],
+        ));
+      } else {
+        information.add(Row(
+          children: <Widget>[
+            Icon(
+              Icons.check_box,
+              color: Colors.green,
+            ),
+            Text(
+              "Class information is loaded.",
+              style: headerStyle,
+            )
+          ],
+        ));
+      }
+      information.add(Row(
+        children: <Widget>[
+          Text("Go to ", style: contentStyle),
+          Icon(Icons.menu),
+          Text(" at the top left to:", style: contentStyle),
+        ],
+      ));
+      information.add(Row(children: <Widget>[
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Icon(Icons.sync),
+                Text("load class information from google spreadsheet;",
+                    style: contentStyle)
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Icon(Icons.group),
+                Text("View / edit class information;", style: contentStyle)
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Icon(Icons.settings),
+                Text("Tweak grouping parameters (number of groups);",
+                    style: contentStyle)
+              ],
+            ),
+          ],
+        ),
+      ]));
+      information.add(Divider());
+      information.add(Row(
+        children: <Widget>[
+          Icon(
+            Icons.warning,
+            color: Colors.red,
+          ),
+          Text(
+            "No grouping loaded.",
+            style: headerStyle,
+          ),
+        ],
+      ));
+      information.add(Row(children: <Widget>[
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              "Go to button bar at the bottom to:",
+              style: contentStyle,
+            ),
+            Row(
+              children: <Widget>[
+                Icon(Icons.refresh),
+                Text("Generate new groups;", style: contentStyle),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Icon(Icons.file_upload),
+                Text("Load saved grouping;", style: contentStyle)
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Icon(Icons.file_download),
+                Text("Save current grouping;", style: contentStyle)
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Icon(Icons.swap_horiz),
+                Icon(Icons.undo),
+                Icon(Icons.redo),
+                Text("Do, undo, and redo student swapping;",
+                    style: contentStyle)
+              ],
+            ),
+          ],
+        ),
+      ]));
+      information.add(Row(
+        children: <Widget>[
+          Icon(
+            Icons.info,
+            color: Colors.blue,
+          ),
+          Text(
+            "Use the top bar to filter students.",
+            style: headerStyle,
+          ),
+        ],
+      ));
+      groupColumns.add(Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: information,
+      ));
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Group M4ker"),
@@ -337,6 +471,7 @@ class _GrouperState extends State<Grouper> {
                             "M",
                             style: TextStyle(
                               color: Colors.white,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           backgroundColor: Colors.blueAccent[200],
@@ -349,6 +484,7 @@ class _GrouperState extends State<Grouper> {
                             "F",
                             style: TextStyle(
                               color: Colors.white,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           backgroundColor: Colors.pinkAccent[200],
@@ -382,9 +518,9 @@ class _GrouperState extends State<Grouper> {
                 ] +
                 Subject.values.map((Subject s) {
                   Color backgroundColor = {
-                    Subject.BIO: Colors.redAccent[200],
-                    Subject.CHM: Colors.amberAccent[400],
-                    Subject.PHY: Colors.green[400],
+                    Subject.BIO: Color.fromRGBO(247, 135, 60, 0.9),
+                    Subject.CHM: Color.fromRGBO(127, 67, 63, 0.9),
+                    Subject.PHY: Color.fromRGBO(124, 20, 2, 0.9),
                   }[s];
                   return DropdownButton<Level>(
                     value: {
@@ -396,23 +532,29 @@ class _GrouperState extends State<Grouper> {
                       return DropdownMenuItem<Level>(
                         value: lv,
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Chip(
                               label: Text(
                                 s.toString().split(".").last,
                                 style: TextStyle(
-                                  color: Colors.white70,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                               backgroundColor: backgroundColor,
                             ),
                             {
-                              null: Icon(Icons.not_interested),
+                              null: Icon(
+                                Icons.not_interested,
+                                color: Colors.red,
+                              ),
                               Level.SL: Chip(
                                 label: Text(
                                   "SL",
                                   style: TextStyle(
-                                    color: Colors.white70,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 backgroundColor: Colors.blue[400],
@@ -421,7 +563,8 @@ class _GrouperState extends State<Grouper> {
                                 label: Text(
                                   "HL",
                                   style: TextStyle(
-                                    color: Colors.white70,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 backgroundColor: Colors.blueGrey[400],
@@ -446,6 +589,7 @@ class _GrouperState extends State<Grouper> {
           Row(
             children: groupColumns,
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
           ),
         ],
       ),
@@ -505,21 +649,21 @@ class _GrouperState extends State<Grouper> {
             ),
             Divider(),
             ListTile(
-              title: Text("Information"),
-              leading: Icon(Icons.help),
-              onTap: () => null,
-            ),
-            Divider(),
-            ListTile(
                 title: Text("Load class from Drive"),
-                leading: Icon(Icons.sync),
+                leading: Icon(
+                  Icons.sync,
+                  color: promo != null ? Colors.teal : null,
+                ),
                 onTap: () {
                   driveSignIn(context, loadPromo);
                 }),
             Divider(),
             ListTile(
               title: Text("View / Edit class"),
-              leading: Icon(Icons.group),
+              leading: Icon(
+                Icons.group,
+                color: promo != null ? Colors.teal : null,
+              ),
               onTap: promo != null
                   ? () {
                       showDialog(
@@ -551,6 +695,7 @@ class _GrouperState extends State<Grouper> {
                     }
                   : null,
             ),
+            Divider(),
           ],
         ),
       ),

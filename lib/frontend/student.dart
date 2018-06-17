@@ -8,28 +8,31 @@ class StudentEntry extends StatelessWidget {
 
   static final Color selectedColor = Colors.lightBlue[200];
 
-  const StudentEntry(
-      {Key key,
-      this.isSelected,
-      this.isHighlighted,
-      this.studentName,
-      this.onTapCallback})
-      : super(key: key);
+  const StudentEntry({
+    Key key,
+    this.isSelected,
+    this.isHighlighted,
+    this.studentName,
+    this.onTapCallback,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
-      child: Text(
-        studentName,
-        style: TextStyle(
-          decoration: isHighlighted ? TextDecoration.underline : null,
-          decorationColor: selectedColor,
-          decorationStyle: TextDecorationStyle.double,
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          width: 1.0,
+          color: isHighlighted ? selectedColor : Colors.white,
         ),
       ),
-      onPressed: onTapCallback,
-      splashColor: isSelected ? null : selectedColor,
-      color: isSelected ? selectedColor : null,
+      child: FlatButton(
+        child: Text(
+          studentName,
+        ),
+        onPressed: onTapCallback,
+        splashColor: isSelected ? null : selectedColor,
+        color: isSelected ? selectedColor : null,
+      ),
     );
   }
 }
