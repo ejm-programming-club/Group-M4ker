@@ -10,7 +10,6 @@ import 'package:group_m4ker/frontend/dialogs.dart';
 import 'package:group_m4ker/frontend/drive.dart';
 import 'package:group_m4ker/frontend/editor.dart';
 import 'package:group_m4ker/frontend/group.dart';
-import 'package:group_m4ker/frontend/profile.dart';
 import 'package:path_provider/path_provider.dart';
 
 class App extends StatelessWidget {
@@ -60,6 +59,17 @@ class _GrouperState extends State<Grouper> {
   List<StudentPos> selectedPositions = [];
   List<StudentPos> highlightedPositions = [];
 
+  Student queryStudent = Student(
+    name: "",
+    profile: Profile(
+        isStrongLeader: false,
+        gender: null,
+        bioLevel: null,
+        chmLevel: null,
+        phyLevel: null),
+  );
+  final queryNameController = TextEditingController();
+
   List<List<StudentPos>> swapHistory = [];
   int swapHistoryPointer = -1;
 
@@ -90,11 +100,26 @@ class _GrouperState extends State<Grouper> {
           selectedPositions.add(pos);
       }
 
+      if (selectedPositions.isNotEmpty) {
+        int queryGroup = selectedPositions.last.groupInd;
+        int queryMember = selectedPositions.last.memberInd;
+        queryStudent = grouping.groups[queryGroup][queryMember].copy();
+        queryNameController.text = queryStudent.name;
+      } else {
+        queryStudent = Student(
+            name: "",
+            profile: Profile(
+              isStrongLeader: false,
+              gender: null,
+              bioLevel: null,
+              chmLevel: null,
+              phyLevel: null,
+            ));
+        queryNameController.clear();
+      }
+
       if (selectedPositions.length == 1) {
-        highlightedPositions = locateProfile(grouping
-            .groups[selectedPositions.last.groupInd]
-                [selectedPositions.last.memberInd]
-            .profile);
+        highlightedPositions = locateQuery();
       } else {
         highlightedPositions = [];
       }
@@ -190,7 +215,6 @@ class _GrouperState extends State<Grouper> {
     String path = directory.path;
     List<String> saves;
     final file = File("$path/$filename");
-    // TODO handle exclusion
     await file.writeAsString(
       '''{"excluded": "${excludedSubject
           .toString()
@@ -237,13 +261,18 @@ class _GrouperState extends State<Grouper> {
     });
   }
 
-  List<StudentPos> locateProfile(Profile profile) {
+  List<StudentPos> locateQuery() {
     List<StudentPos> positions = [];
     for (int groupInd = 0; groupInd < grouping.groups.length; groupInd++) {
       for (int memberInd = 0;
           memberInd < grouping.groups[groupInd].length;
           memberInd++) {
-        if (grouping.groups[groupInd][memberInd].profile == profile) {
+        Student student = grouping.groups[groupInd][memberInd];
+        if (student.profile == queryStudent.profile ||
+            (queryStudent.name.isNotEmpty &&
+                student.name
+                    .toLowerCase()
+                    .contains(queryStudent.name.toLowerCase()))) {
           positions.add(StudentPos(groupInd, memberInd));
         }
       }
@@ -275,24 +304,149 @@ class _GrouperState extends State<Grouper> {
       appBar: AppBar(
         title: Text("Group M4ker"),
       ),
-      body: Column(
+      body: ListView(
         children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width / 4,
+                    child: TextField(
+                      controller: queryNameController,
+                      decoration: InputDecoration(
+                        helperText: "Student name",
+                      ),
+                      onChanged: (String name) {
+                        setState(() {
+                          queryStudent.name = name;
+                          highlightedPositions = locateQuery();
+                        });
+                      },
+                    ),
+                  ),
+                  DropdownButton<Gender>(
+                    value: queryStudent.profile.gender,
+                    items: [
+                      DropdownMenuItem<Gender>(
+                        child: Text("M/F"),
+                        value: null,
+                      ),
+                      DropdownMenuItem<Gender>(
+                        child: Chip(
+                          label: Text(
+                            "M",
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                          backgroundColor: Colors.blueAccent[200],
+                        ),
+                        value: Gender.M,
+                      ),
+                      DropdownMenuItem<Gender>(
+                        child: Chip(
+                          label: Text(
+                            "F",
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                          backgroundColor: Colors.pinkAccent[200],
+                        ),
+                        value: Gender.F,
+                      ),
+                    ],
+                    onChanged: (Gender gender) {
+                      setState(() {
+                        queryNameController.clear();
+                        queryStudent.profile.gender = gender;
+                        highlightedPositions = locateQuery();
+                      });
+                    },
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width / 6,
+                    child: CheckboxListTile(
+                      title: Text("Leadership"),
+                      dense: true,
+                      value: queryStudent.profile.isStrongLeader,
+                      onChanged: (bool isStrongLeader) {
+                        setState(() {
+                          queryStudent.profile.isStrongLeader = isStrongLeader;
+                          highlightedPositions = locateQuery();
+                          queryNameController.clear();
+                        });
+                      },
+                    ),
+                  ),
+                ] +
+                Subject.values.map((Subject s) {
+                  Color backgroundColor = {
+                    Subject.BIO: Colors.redAccent[200],
+                    Subject.CHM: Colors.amberAccent[400],
+                    Subject.PHY: Colors.green[400],
+                  }[s];
+                  return DropdownButton<Level>(
+                    value: {
+                      Subject.BIO: queryStudent.profile.bioLevel,
+                      Subject.CHM: queryStudent.profile.chmLevel,
+                      Subject.PHY: queryStudent.profile.phyLevel,
+                    }[s],
+                    items: [null, Level.SL, Level.HL].map((Level lv) {
+                      return DropdownMenuItem<Level>(
+                        value: lv,
+                        child: Row(
+                          children: <Widget>[
+                            Chip(
+                              label: Text(
+                                s.toString().split(".").last,
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                ),
+                              ),
+                              backgroundColor: backgroundColor,
+                            ),
+                            {
+                              null: Icon(Icons.not_interested),
+                              Level.SL: Chip(
+                                label: Text(
+                                  "SL",
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                                backgroundColor: Colors.blue[400],
+                              ),
+                              Level.HL: Chip(
+                                label: Text(
+                                  "HL",
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                                backgroundColor: Colors.blueGrey[400],
+                              ),
+                            }[lv],
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (Level lv) {
+                      if (s == Subject.BIO) queryStudent.profile.bioLevel = lv;
+                      if (s == Subject.CHM) queryStudent.profile.chmLevel = lv;
+                      if (s == Subject.PHY) queryStudent.profile.phyLevel = lv;
+                      setState(() {
+                        highlightedPositions = locateQuery();
+                        queryNameController.clear();
+                      });
+                    },
+                  );
+                }).toList(),
+          ),
           Row(
             children: groupColumns,
             crossAxisAlignment: CrossAxisAlignment.start,
           ),
-          selectedPositions.isEmpty
-              ? Row()
-              : ProfilePreview(
-                  profile: grouping
-                      .groups[selectedPositions.last.groupInd]
-                          [selectedPositions.last.memberInd]
-                      .profile,
-                  name: grouping
-                      .groups[selectedPositions.last.groupInd]
-                          [selectedPositions.last.memberInd]
-                      .name,
-                ),
         ],
       ),
       drawer: Drawer(

@@ -51,6 +51,19 @@ class Student {
         null;
   }
 
+  Student copy() {
+    return Student(
+      name: name,
+      profile: Profile(
+        isStrongLeader: profile.isStrongLeader,
+        gender: profile.gender,
+        bioLevel: profile.bioLevel,
+        chmLevel: profile.chmLevel,
+        phyLevel: profile.phyLevel,
+      ),
+    );
+  }
+
   @override
   bool operator ==(other) {
     return other is Student && other.name == name && other.profile == profile;
