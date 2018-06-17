@@ -475,7 +475,7 @@ class _GrouperState extends State<Grouper> {
                     child: TextField(
                       controller: queryNameController,
                       decoration: InputDecoration(
-                        helperText: "Student name",
+                        hintText: "Student name",
                       ),
                       onChanged: (String name) {
                         setState(() {
@@ -759,6 +759,35 @@ class _GrouperState extends State<Grouper> {
           onPressed:
               swapHistoryPointer < swapHistory.length - 1 ? redoSwap : null,
           tooltip: "Redo swap",
+        ),
+        IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: grouping.groups.isNotEmpty
+              ? () => showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                          title: Text("Confirm clearing grouping"),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text("CANCEL"),
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                            FlatButton(
+                              child: Text("CLEAR"),
+                              textColor: Colors.red,
+                              onPressed: () {
+                                setState(() {
+                                  grouping = Grouping([]);
+                                  issues = [];
+                                });
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        ),
+                  )
+              : null,
+          tooltip: "Clear groups",
         ),
         IconButton(
           icon: Icon(Icons.refresh),
