@@ -31,7 +31,7 @@ Group maker for IB's Group 4 field trips.
 ## Documentation
 The code of the app is separated into `backend/` and `frontend/`,
 where the former is responsible for the representation and generation of data
-and the latter takes charge the user interface.
+and the latter takes charge of the user interface.
 
 ### Backend
 > `backend/utils.dart`
@@ -52,6 +52,7 @@ The list of all `Student`s is represented by a `Promo`
 
 A `Promo` can be divided into `Group`s of `Student`s.
 Such `Group`s form a `Grouping`.
+`Grouping`s are saved under JSON format that also encapsulates the excluded population.
 
 > `backend/generator.dart`  
 > `backend/generators/`
@@ -76,3 +77,10 @@ females, SLs and physicists do not deviate from the mean values.
 - `frontend/drive.dart` is responsible for the logic behind importing class information from Google Drive.
 - `frontend/editor.dart` is responsible for the logic behind the class information editor.
 - `frontend/dialogs` gathers myriad popups and confirmation dialogs.
+
+### Misc
+`gdrive_keys.json`
+The secret key for the Google Drive API is kept here,
+and this file is ignored for security reasons.
+
+To run the app on your own emulator, contact Théo Takla (t.takla19@ejm.org) to get the secret key. 
