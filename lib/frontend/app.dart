@@ -689,7 +689,7 @@ class _GrouperState extends State<Grouper> {
                   color: promo == null ? Colors.teal : null,
                 ),
                 onTap: () {
-                  driveSignIn(context, loadPromo);
+                  beforeDriveSignIn(context, loadPromo);
                 }),
             Divider(),
             ListTile(
