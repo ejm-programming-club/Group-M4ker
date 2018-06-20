@@ -705,24 +705,19 @@ class _GrouperState extends State<Grouper> {
                         barrierDismissible: false,
                         builder: (BuildContext context) => AlertDialog(
                               title: Text("Class"),
-                              content: SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.8,
-                                width: MediaQuery.of(context).size.width * 0.9,
-                                child: PromoEditor(
-                                  promo: promo,
-                                  onSave: (Promo newPromo) {
-                                    setState(() {
-                                      promo = newPromo;
-                                      savePromo();
-                                      exclude(excludedSubject);
+                              content: PromoEditor(
+                                promo: promo,
+                                onSave: (Promo newPromo) {
+                                  setState(() {
+                                    promo = newPromo;
+                                    savePromo();
+                                    exclude(excludedSubject);
 
-                                      grouping = Grouping([]);
-                                      selectedPositions = [];
-                                      issues = [];
-                                    });
-                                  },
-                                ),
+                                    grouping = Grouping([]);
+                                    selectedPositions = [];
+                                    issues = [];
+                                  });
+                                },
                               ),
                             ),
                       );
