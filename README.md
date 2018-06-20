@@ -79,7 +79,7 @@ females, SLs and physicists do not deviate from the mean values.
 - `frontend/dialogs` gathers myriad popups and confirmation dialogs.
 
 ### Misc
-`gdrive_keys.json`
+`secrets.json`
 The secret key for the Google Drive API is kept here,
 and this file is ignored for security reasons.
 
