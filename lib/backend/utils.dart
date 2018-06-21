@@ -270,21 +270,21 @@ class Promo {
               : false,
           bioLevel: bioIndex != null
               ? studentInfo[bioIndex].toUpperCase() == "SL"
-                  ? Level.HL
+                  ? Level.SL
                   : studentInfo[bioIndex].toUpperCase() == "HL"
                       ? Level.HL
                       : null
               : null,
           chmLevel: bioIndex != null
               ? studentInfo[chmIndex].toUpperCase() == "SL"
-                  ? Level.HL
+                  ? Level.SL
                   : studentInfo[chmIndex].toUpperCase() == "HL"
                       ? Level.HL
                       : null
               : null,
           phyLevel: bioIndex != null
               ? studentInfo[phyIndex].toUpperCase() == "SL"
-                  ? Level.HL
+                  ? Level.SL
                   : studentInfo[phyIndex].toUpperCase() == "HL"
                       ? Level.HL
                       : null
