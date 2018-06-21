@@ -59,6 +59,7 @@ class _PromoEditorState extends State<PromoEditor> {
           children: <Widget>[
             IconButton(
               icon: Icon(Icons.indeterminate_check_box),
+              tooltip: "Remove selected student",
               onPressed: selectedStudent == null
                   ? null
                   : () => setState(() {
@@ -69,6 +70,7 @@ class _PromoEditorState extends State<PromoEditor> {
             ),
             IconButton(
               icon: Icon(Icons.add_box),
+              tooltip: "Add new student",
               onPressed: () {
                 showDialog(
                     context: context,
@@ -79,6 +81,7 @@ class _PromoEditorState extends State<PromoEditor> {
                         title: Text("Name of student"),
                         content: TextField(
                           controller: controller,
+                          autofocus: true,
                         ),
                         actions: <Widget>[
                           FlatButton(
@@ -112,6 +115,51 @@ class _PromoEditorState extends State<PromoEditor> {
                       );
                     });
               },
+            ),
+            IconButton(
+              icon: Icon(Icons.edit),
+              tooltip: "Rename selected student",
+              onPressed: selectedStudent == null
+                  ? null
+                  : () {
+                      showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (BuildContext context) {
+                            final controller = TextEditingController
+                                .fromValue(TextEditingValue(
+                              text: selectedStudent.name,
+                              selection: TextSelection(
+                                baseOffset: 0,
+                                extentOffset: selectedStudent.name.length,
+                              ),
+                            ));
+                            return AlertDialog(
+                              title: Text("Name of student"),
+                              content: TextField(
+                                controller: controller,
+                                autofocus: true,
+                              ),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text("CANCEL"),
+                                  textColor: Colors.red,
+                                  onPressed: () => Navigator.of(context).pop(),
+                                ),
+                                FlatButton(
+                                  child: Text("DONE"),
+                                  onPressed: () {
+                                    setState(() {
+                                      selectedStudent.name = controller.text;
+                                      edited = true;
+                                    });
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          });
+                    },
             ),
             FlatButton(
               child: Text("CANCEL"),

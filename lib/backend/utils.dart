@@ -294,6 +294,8 @@ class Promo {
 
       if (reportColumns != null) {
         reportColumns([
+          "The following columns are identified:",
+          "",
           "Name: ${nameIndex == null ? 'MISSING' : headers[nameIndex]}",
           "Gender: ${genderIndex == null ? 'MISSING' : headers[genderIndex]}",
           "Leadership: ${leadershipIndex == null
@@ -304,6 +306,7 @@ class Promo {
               ? 'MISSING'
               : headers[chmIndex]}",
           "Physics level: ${phyIndex == null ? 'MISSING' : headers[phyIndex]}",
+          "",
           "Missing information can be added at Menu (top left) > View / Edit class.",
         ]);
       }
