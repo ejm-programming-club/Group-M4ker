@@ -22,6 +22,19 @@ class GroupBox extends StatelessWidget {
     this.issues,
   }) : super(key: key);
 
+  String viewStats(GroupStats stats) {
+    return [
+      "M: ${stats.maleCount}",
+      "F: ${stats.femaleCount}",
+      "Bio: ${stats.bioCount}",
+      "Chm: ${stats.chmCount}",
+      "Phy: ${stats.phyCount}",
+      "SL: ${stats.slCount}",
+      "HL: ${stats.hlCount}",
+      "Leaders: ${stats.strongLeadersCount}",
+    ].join("\n");
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -49,9 +62,10 @@ class GroupBox extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                message: issues.isEmpty
-                    ? "✅"
-                    : issues.map((String s) => "❌ $s").join("\n"),
+                message: (issues.isEmpty
+                        ? ""
+                        : issues.map((String s) => "❌ $s").join("\n") + "\n") +
+                    viewStats(GroupStats.of(members)),
                 preferBelow: false,
               ),
             ),
