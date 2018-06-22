@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import "package:googleapis/drive/v3.dart";
 import "package:googleapis_auth/auth_io.dart";
 import 'package:group_m4ker/frontend/dialogs.dart';
@@ -16,7 +15,10 @@ var scopes = [DriveApi.DriveReadonlyScope];
 
 /// Get secrets before the sign in
 void beforeDriveSignIn(BuildContext context, dynamic doneCallback) {
-  rootBundle.loadStructuredData("secrets.json", (jsonStr) async {
+  DefaultAssetBundle
+      .of(context)
+      .loadString("secrets.json")
+      .then((jsonStr) async {
     driveSignIn(
       ClientId(id, json.decode(jsonStr)["key"]),
       context,
@@ -30,6 +32,7 @@ void beforeDriveSignIn(BuildContext context, dynamic doneCallback) {
 void driveSignIn(ClientId id, BuildContext context, dynamic doneCallback) {
   clientViaUserConsent(id, scopes, (url) => launch(url))
       .then((AuthClient client) {
+    print("Got after the validation");
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -76,7 +79,6 @@ class _DriveFileSearcher extends State<DriveFileSearcher> {
         .then((FileList fileList) {
       setState(() {
         results = fileList.files;
-        print(results.map((f) => f.name));
       });
     });
   }
@@ -146,7 +148,7 @@ class _DriveFileSearcher extends State<DriveFileSearcher> {
                     downloadOptions: DownloadOptions.FullMedia,
                   )
                       .then((response) {
-                    // decode csv
+                    // Decode csv
                     String csv = "";
                     response.stream
                         .transform(utf8.decoder)
