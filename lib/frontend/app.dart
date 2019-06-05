@@ -640,8 +640,8 @@ class _GrouperState extends State<Grouper> {
               subtitle: Slider(
                 value: groupCount.toDouble(),
                 min: 2.0,
-                max: 10.0,
-                divisions: 8,
+                max: 15.0,
+                divisions: 13,
                 onChanged: (double value) {
                   setState(() {
                     groupCount = value.toInt();
